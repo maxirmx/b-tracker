@@ -1,8 +1,8 @@
-# s-tracker
+# b-tracker
 
-Delivery tracking application front-end
+B-robot application front-end
 
-[![CI workflow](https://github.com/maxirmx/s-tracker/actions/workflows/ci.yml/badge.svg)](https://github.com/maxirmx/s-tracker/actions/workflows/ci.yml)
+[![CI workflow](https://github.com/maxirmx/b-tracker/actions/workflows/ci.yml/badge.svg)](https://github.com/maxirmx/b-tracker/actions/workflows/ci.yml)
 
 ## Recommended IDE Setup
 

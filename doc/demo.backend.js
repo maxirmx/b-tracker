@@ -1,6 +1,6 @@
 // Copyright (C) 2023 Maxim [maxirmx] Samsonov  (www.sw.consulting)
 // All rights reserved.
-// This file is a part of s-tracker applcation  (test data set)
+// This file is a part of b-tracker applcation  (test data set)
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions

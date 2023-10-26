@@ -1,7 +1,7 @@
 <script setup>
 // Copyright (C) 2023 Maxim [maxirmx] Samsonov (www.sw.consulting)
 // All rights reserved.
-// This file is a part of s-tracker applcation
+// This file is a part of b-tracker applcation
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -57,15 +57,15 @@ function getUserName() {
   <v-app class="rounded rounded-md">
     <v-app-bar>
       <template v-slot:prepend>
-        <v-app-bar-nav-icon @click.stop="toggleDrawer()" color="orange"></v-app-bar-nav-icon>
+        <v-app-bar-nav-icon @click.stop="toggleDrawer()" color="blue-darken-2"></v-app-bar-nav-icon>
       </template>
-      <v-app-bar-title class="orange">Track and trace {{ getUserName() }} </v-app-bar-title>
+      <v-app-bar-title class="orange">Trade and Smile {{ getUserName() }} </v-app-bar-title>
       <v-spacer />
     </v-app-bar>
     <v-navigation-drawer v-model="drawer" elevation="4">
       <template v-slot:prepend>
         <div class="pa-2" v-if="height > 480">
-          <img alt="Сargo Management" class="logo" src="@/assets/logo.svg" />
+          <img alt="Сargo Management" class="logo" src="@/assets/logo.png" />
         </div>
       </template>
       <v-list v-if="authStore.user">
@@ -124,6 +124,7 @@ function getUserName() {
 .logo {
   margin: 1rem;
   display: block;
+  width: 90%;
 }
 
 .version {
