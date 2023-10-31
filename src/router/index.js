@@ -74,20 +74,20 @@ const router = createRouter({
       props: true
     },
     {
-      path: '/robots',
+      path: '/btasks',
       name: 'Роботы',
-      component: () => import('@/views/Robots_View.vue')
+      component: () => import('@/views/BTasks_View.vue')
     },
     {
-      path: '/robot/edit/:robotId',
+      path: '/btask/edit/:robotId',
       name: 'Настройка робота',
-      component: () => import('@/views/Robots_EditView.vue'),
+      component: () => import('@/views/BTask_EditView.vue'),
       props: true
     },
     {
-      path: '/robot/add',
+      path: '/btask/add',
       name: 'Добавить робота',
-      component: () => import('@/views/Robots_AddView.vue')
+      component: () => import('@/views/BTask_AddView.vue')
     }
   ]
 })
@@ -134,9 +134,9 @@ router.beforeEach(async (to) => {
     if (!auth.user) {
       return true
     }
-    // (3.1) No need to login, fall thtrough to shipments
+    // (3.1) No need to login, fall thtrough to btasks
     hideDrawer()
-    return '/robots'
+    return '/btasks'
   }
 
   // (3.1) Do as requested

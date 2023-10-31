@@ -24,17 +24,9 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-import Robot from '@/components/Robot_Settings.vue'
-
-const props = defineProps({
-  robotId: {
-    type: String,
-    required: true
-  }
-})
-const id = parseInt(props.robotId)
+import Robots from '@/components/BTasks_List.vue'
 </script>
 
 <template>
-  <Robot :create="false" :robotId="id" />
+  <Robots />
 </template>

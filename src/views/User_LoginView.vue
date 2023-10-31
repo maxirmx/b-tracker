@@ -52,7 +52,7 @@ function onSubmit(values, { setErrors }) {
 
   return authStore
     .login(login_email, login_password)
-    .then(() => router.push('/shipments'))
+    .then(() => router.push('/btasks'))
     .catch((error) => setErrors({ apiError: error }))
 }
 </script>

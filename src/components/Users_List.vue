@@ -110,12 +110,11 @@ async function deleteUser(item) {
 
 const headers = [
   { title: 'Пользователь', align: 'start', key: 'id' },
-  { title: 'E-mail', align: 'start', key: 'email'},
+  { title: 'E-mail', align: 'start', key: 'email' },
   { title: 'Права', align: 'start', key: 'credentials', sortable: false },
   { title: '', align: 'center', key: 'actions1', sortable: false, width: '5%' },
   { title: '', align: 'center', key: 'actions2', sortable: false, width: '5%' }
 ]
-
 </script>
 
 <template>
@@ -172,18 +171,16 @@ const headers = [
           </button>
         </template>
       </v-data-table>
-      <div v-if="!users?.length" class="text-center m-5">
-        Список пользователей пуст
-      </div>
+      <div v-if="!users?.length" class="text-center m-5">Список пользователей пуст</div>
       <div v-if="users?.length">
-      <v-text-field
-        v-model="authStore.users_search"
-        :append-inner-icon="mdiMagnify"
-        label="Поиск по любой информации о пользователе"
-        variant="solo"
-        hide-details
-      />
-    </div>
+        <v-text-field
+          v-model="authStore.users_search"
+          :append-inner-icon="mdiMagnify"
+          label="Поиск по любой информации о пользователе"
+          variant="solo"
+          hide-details
+        />
+      </div>
     </v-card>
     <div v-if="users?.loading" class="text-center m-5">
       <span class="spinner-border spinner-border-lg align-center"></span>

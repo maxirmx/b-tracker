@@ -75,7 +75,6 @@ const showPassword = ref(false)
 const showPassword2 = ref(false)
 const showSecret = ref(false)
 
-
 let user = ref({
   isEnabled: 'ENABLED'
 })
@@ -157,11 +156,13 @@ function onSubmit(values, { setErrors }) {
         if (window.history.length > 0) {
           router.go(-1)
         } else {
-          router.push('/robots')
+          router.push('/btasks')
         }
       })
-      .catch((error) => {         console.log(error)
-setErrors({ apiError: error })})
+      .catch((error) => {
+        console.log(error)
+        setErrors({ apiError: error })
+      })
   }
 }
 </script>
@@ -382,7 +383,9 @@ setErrors({ apiError: error })})
       </div>
       <div v-if="errors.lastName" class="alert alert-danger mt-3 mb-0">{{ errors.lastName }}</div>
       <div v-if="errors.firstName" class="alert alert-danger mt-3 mb-0">{{ errors.firstName }}</div>
-      <div v-if="errors.patronimic" class="alert alert-danger mt-3 mb-0">{{ errors.patronimic }}</div>
+      <div v-if="errors.patronimic" class="alert alert-danger mt-3 mb-0">
+        {{ errors.patronimic }}
+      </div>
       <div v-if="errors.email" class="alert alert-danger mt-3 mb-0">{{ errors.email }}</div>
       <div v-if="errors.password" class="alert alert-danger mt-3 mb-0">{{ errors.password }}</div>
       <div v-if="errors.password2" class="alert alert-danger mt-3 mb-0">{{ errors.password2 }}</div>

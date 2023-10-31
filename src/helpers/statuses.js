@@ -25,126 +25,27 @@
 
 import { reactive, markRaw } from 'vue'
 
-import CustomsStartIcon from '@/components/icons/IconCustomsStart.vue'
-import CustomsEndIcon from '@/components/icons/IconCustomsEnd.vue'
-import OutOfStorageIcon from '@/components/icons/IconOutOfStorage.vue'
-import InStorageIcon from '@/components/icons/IconInStorage.vue'
-import RegisteredIcon from '@/components/icons/IconRegistered.vue'
-import CollectedIcon from '@/components/icons/IconCollected.vue'
-import DeliveredIcon from '@/components/icons/IconDelivered.vue'
-import VeryDeliveredIcon from '@/components/icons/IconVeryDelivered.vue'
-
-import OutOfCountryOfOriginIcon from '@/components/icons/IconOutOfCountryOfOrigin.vue'
-import IntoCountryOfTransitIcon from '@/components/icons/IconIntoCountryOfTransit.vue'
-import OutOfCountryOfTransitIcon from '@/components/icons/IconOutOfCountryOfTransit.vue'
-import IntoCountryOfDestinationIcon from '@/components/icons/IconIntoCountryOfDestination.vue'
-import WaitingForTransitIcon from '@/components/icons/IconWaitingForTransit.vue'
-import InTransitIcon from '@/components/icons/IconInTransit.vue'
-import WaitingForShipmentIcon from '@/components/icons/IconWaitingForShipment.vue'
-import WaitingIcon from '@/components/icons/IconWaiting.vue'
+import StopLossIcon from '@/components/icons/IconStopLoss.vue'
+import TakeProfitIcon from '@/components/icons/IconTakeProfit.vue'
 
 import UnknownIcon from '@/components/icons/IconUnknown.vue'
 
 export const stcodes = {
-  REGISTERED: 0,
-  COLLECTED: 1,
-  IN_STORAGE: 2,
-  OUT_OF_STORAGE: 3,
-  CUSTOMS_START: 4,
-  CUSTOMS_END: 5,
-  DELIVERED: 6,
-  OUT_OF_COUNTRY_OF_ORIGIN: 7,
-  INTO_COUNTRY_OF_TRANSIT: 8,
-  OUT_OF_COUNTRY_OF_TRANSIT: 9,
-  INTO_COUNTRY_OF_DESTINATION: 10,
-  WAITING_FOR_TRANSIT: 11,
-  IN_TRANSIT: 12,
-  WAITING: 13,
-  WAITING_FOR_SHIPMENT: 14,
-  VERY_DELIVERED: 15
+  STOP_LOSS: 0,
+  TAKE_PROFIT: 1
 }
 
 export const statuses = reactive({
   items: [
     {
-      id: stcodes.REGISTERED,
-      name: 'Заявка на перевозку зарегистрирована',
-      icon: markRaw(RegisteredIcon)
+      id: stcodes.STOP_LOSS,
+      name: 'Stop-loss',
+      icon: markRaw(StopLossIcon)
     },
     {
-      id: stcodes.WAITING_FOR_SHIPMENT,
-      name: 'Ожидание готовности груза',
-      icon: markRaw(WaitingForShipmentIcon)
-    },
-    {
-      id: stcodes.COLLECTED,
-      name: 'Груз забран у отправителя',
-      icon: markRaw(CollectedIcon)
-    },
-    {
-      id: stcodes.WAITING,
-      name: 'Ожидание',
-      icon: markRaw(WaitingIcon)
-    },
-    {
-      id: stcodes.WAITING_FOR_TRANSIT,
-      name: 'Ожидание отправления',
-      icon: markRaw(WaitingForTransitIcon)
-    },
-    {
-      id: stcodes.IN_TRANSIT,
-      name: 'Груз в пути',
-      icon: markRaw(InTransitIcon)
-    },
-    {
-      id: stcodes.IN_STORAGE,
-      name: 'Груз прибыл на склад',
-      icon: markRaw(InStorageIcon)
-    },
-    {
-      id: stcodes.OUT_OF_STORAGE,
-      name: 'Груз убыл со склада',
-      icon: markRaw(OutOfStorageIcon)
-    },
-    {
-      id: stcodes.CUSTOMS_START,
-      name: 'Начало таможенного оформления',
-      icon: markRaw(CustomsStartIcon)
-    },
-    {
-      id: stcodes.CUSTOMS_END,
-      name: 'Окончание таможенного оформления',
-      icon: markRaw(CustomsEndIcon)
-    },
-    {
-      id: stcodes.OUT_OF_COUNTRY_OF_ORIGIN,
-      name: 'Груз покинул страну отправления',
-      icon: markRaw(OutOfCountryOfOriginIcon)
-    },
-    {
-      id: stcodes.INTO_COUNTRY_OF_TRANSIT,
-      name: 'Груз прибыл в страну транзита',
-      icon: markRaw(IntoCountryOfTransitIcon)
-    },
-    {
-      id: stcodes.OUT_OF_COUNTRY_OF_TRANSIT,
-      name: 'Груз покинул страну транзита',
-      icon: markRaw(OutOfCountryOfTransitIcon)
-    },
-    {
-      id: stcodes.INTO_COUNTRY_OF_DESTINATION,
-      name: 'Груз прибыл в страну назначения',
-      icon: markRaw(IntoCountryOfDestinationIcon)
-    },
-    {
-      id: stcodes.DELIVERED,
-      name: 'Груз прибыл в пункт назначения',
-      icon: markRaw(DeliveredIcon)
-    },
-    {
-      id: stcodes.VERY_DELIVERED,
-      name: 'Перевозка завершена. Груз доставлен получателю',
-      icon: markRaw(VeryDeliveredIcon)
+      id: stcodes.TAKE_PROFIT,
+      name: 'Take-profit',
+      icon: markRaw(TakeProfitIcon)
     }
   ],
 
@@ -152,7 +53,7 @@ export const statuses = reactive({
     const item = this.items.find((obj) => {
       return obj.id === code
     })
-    return item ? item.name : 'неизвестный статус'
+    return item ? item.name : 'неизвестная стратегия'
   },
   getIcon(code) {
     const item = this.items.find((obj) => {

@@ -70,7 +70,7 @@ function getUserName() {
       </template>
       <v-list v-if="authStore.user">
         <v-list-item>
-          <RouterLink to="/robots" class="link">Роботы</RouterLink>
+          <RouterLink to="/btasks" class="link">Роботы</RouterLink>
         </v-list-item>
         <v-list-item v-if="!authStore.user.isAdmin">
           <RouterLink :to="'/user/edit/' + authStore.user.id" class="link">Настройки</RouterLink>

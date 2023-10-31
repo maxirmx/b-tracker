@@ -28,9 +28,9 @@
   margin: 0 auto;
 }
 
-/* Forms: user settings/register, shipment new/edit, status new/edit */
+/* Forms: user settings/register, btask new/edit, status new/edit */
 /* Tables: organizations */
-/* Lists: shipment history */
+/* Lists: btask history */
 .form-2,
 .table-1,
 .list-1 {
@@ -46,7 +46,7 @@
   margin: 0 auto;
 }
 
-/* Tables: shipments */
+/* Tables: btasks */
 .table-3 {
   width: 100%;
   max-width: 2048px;
@@ -54,7 +54,7 @@
   padding: 0;
 }
 
-/* The link to create new entity (shipment, user, org, status */
+/* The link to create new entity (btask, user, org, status */
 .link-crt {
   margin-bottom: 1rem;
 }
@@ -75,7 +75,7 @@
   top: 20px;
   border: none;
   height: 4px;
-  background: #1976D2;
+  background: #1976d2;
   margin-bottom: 50px;
 }
 
@@ -94,7 +94,7 @@
   padding: 0.5rem;
   margin-bottom: 1rem;
   border-radius: 0.25rem;
-  border: 1px solid #1976D2;
+  border: 1px solid #1976d2;
   background-color: #f5f5f5;
   color: #282626;
   font-size: 1rem;
@@ -111,7 +111,7 @@
 
 .input:focus {
   outline: none;
-  box-shadow: 0px 2px 10px #1976D2;
+  box-shadow: 0px 2px 10px #1976d2;
 }
 
 .input::placeholder {
@@ -143,7 +143,7 @@
 
 .button-o:focus {
   outline: none;
-  box-shadow: 0px 2px 10px #1976D2;
+  box-shadow: 0px 2px 10px #1976d2;
 }
 
 .button-o-c {
@@ -154,7 +154,7 @@
   padding: 0.5rem;
   border-radius: 0.25rem;
   border: none;
-  background-color: #1976D2;
+  background-color: #1976d2;
   color: white;
   font-size: 1rem;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
@@ -173,7 +173,7 @@ a:hover {
 a,
 .orange {
   text-decoration: none;
-  color: #1976D2;
+  color: #1976d2;
   transition: 0.4s;
 }
 
@@ -229,7 +229,7 @@ a,
   margin-right: 1rem;
   width: 16px;
   height: 16px;
-  background-color: #1976D2;
+  background-color: #1976d2;
   border-radius: 3px;
 }
 
@@ -302,7 +302,7 @@ a,
   float: right;
   margin-left: 0.5rem;
   text-decoration: none;
-  color: #1976D2;
+  color: #1976d2;
   transition: 0.4s;
 }
 
@@ -316,22 +316,22 @@ a,
 
 @media (hover: hover) {
   a:hover {
-    color: #EEEEEE;
-    background-color: #2773A6;
+    color: #eeeeee;
+    background-color: #2773a6;
   }
 
   .button:hover {
-    color: #EEEEEE;
-    background-color: #2773A6;
+    color: #eeeeee;
+    background-color: #2773a6;
   }
 
   .btn:hover {
-    color: #EEEEEE;
+    color: #eeeeee;
     background-color: white;
   }
   .anti-btn:hover,
   .button-o-c:hover {
-    color: #1976D2;
+    color: #1976d2;
     background-color: white;
   }
 }

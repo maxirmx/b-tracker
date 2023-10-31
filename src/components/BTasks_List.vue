@@ -36,15 +36,15 @@ import { mdiMagnify } from '@mdi/js'
 import { useConfirm } from 'vuetify-use-dialog'
 const confirm = useConfirm()
 
-import { useShipmentsStore } from '@/stores/shipments.store.js'
+import { useBTasksStore } from '@/stores/btasks.store.js'
 import { useAuthStore } from '@/stores/auth.store.js'
 import { useAlertStore } from '@/stores/alert.store.js'
 
 const authStore = useAuthStore()
 
-const shipmentsStore = useShipmentsStore()
-const { shipments } = storeToRefs(shipmentsStore)
-shipmentsStore.getAll(false)
+const btasksStore = useBTasksStore()
+const { btasks } = storeToRefs(btasksStore)
+btasksStore.getAll(false)
 
 const alertStore = useAlertStore()
 const { alert } = storeToRefs(alertStore)
@@ -58,15 +58,15 @@ function getDate(date) {
 }
 
 function editShipment(item) {
-  router.push('robot/edit/' + item.id)
+  router.push('btask/edit/' + item.id)
 }
 
 function viewHistory(item) {
-  router.push('robot/' + item.id)
+  router.push('btask/' + item.id)
 }
 
 async function deleteShipment(item) {
-  const content = 'Удалить отправление "' + item['number'] + '" ?'
+  const content = 'Удалить торгового робота "' + item['number'] + '" ?'
   const result = await confirm({
     title: 'Подтверждение',
     confirmationText: 'Удалить',
@@ -82,10 +82,10 @@ async function deleteShipment(item) {
   })
 
   if (result) {
-    shipmentsStore
+    btasksStore
       .delete(item['id'])
       .then(() => {
-        shipmentsStore.getAll()
+        btasksStore.getAll()
       })
       .catch((error) => {
         alertStore.error(error)
@@ -132,7 +132,7 @@ const headers = authStore.user?.isManager
     <hr class="hr" />
 
     <div class="link-crt">
-      <router-link :to="'/robot/add'" class="link">
+      <router-link :to="'/btask/add'" class="link">
         <font-awesome-icon
           size="1x"
           icon="fa-solid fa-truck-fast"
@@ -143,17 +143,17 @@ const headers = authStore.user?.isManager
 
     <v-card>
       <v-data-table
-        v-if="shipments?.length"
-        v-model:items-per-page="authStore.shipments_per_page"
-        items-per-page-text="Отправлений на странице"
+        v-if="btasks?.length"
+        v-model:items-per-page="authStore.btasks_per_page"
+        items-per-page-text="Торговых роботов на странице"
         :items-per-page-options="itemsPerPageOptions"
         page-text="{0}-{1} из {2}"
-        v-model:page="authStore.shipments_page"
+        v-model:page="authStore.btasks_page"
         :headers="headers"
-        :items="shipments"
-        :search="authStore.shipments_search"
+        :items="btasks"
+        :search="authStore.btasks_search"
         :custom-filter="filterShipments"
-        v-model:sort-by="authStore.shipments_sort_by"
+        v-model:sort-by="authStore.btasks_sort_by"
         item-value="number"
         class="elevation-1"
         pa-0
@@ -204,18 +204,18 @@ const headers = authStore.user?.isManager
       </v-data-table>
       <v-spacer></v-spacer>
       <v-text-field
-        v-model="authStore.shipments_search"
+        v-model="authStore.btasks_search"
         :append-inner-icon="mdiMagnify"
-        label="Поиск по любой информации об отправлении"
+        label="Поиск по любой информации о торговом роботе"
         variant="solo"
         hide-details
       />
     </v-card>
-    <div v-if="shipments?.loading" class="text-center m-5">
+    <div v-if="btasks?.loading" class="text-center m-5">
       <span class="spinner-border spinner-border-lg align-center"></span>
     </div>
-    <div v-if="shipments?.error" class="text-center m-5">
-      <div class="text-danger">Ошибка при загрузке списка отправлений: {{ shipments.error }}</div>
+    <div v-if="btasks?.error" class="text-center m-5">
+      <div class="text-danger">Ошибка при загрузке списка торговых роботов: {{ btasks.error }}</div>
     </div>
     <div v-if="alert" class="alert alert-dismissable mt-3 mb-0" :class="alert.type">
       <button @click="alertStore.clear()" class="btn btn-link close">×</button>

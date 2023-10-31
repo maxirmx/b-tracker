@@ -32,31 +32,31 @@ import moment from 'moment'
 import router from '@/router'
 import { stcodes, statuses } from '@/helpers/statuses.js'
 
-import { useOrgsStore } from '@/stores/orgs.store.js'
-import { useShipmentsStore } from '@/stores/shipments.store.js'
+import { useUsersStore } from '@/stores/users.store.js'
+import { useBTasksStore } from '@/stores/btasks.store.js'
 
 const props = defineProps({
   create: {
     type: Boolean,
     required: true
   },
-  robotId: {
+  btaskId: {
     type: Number,
     required: false
   }
 })
 
-const orgsStore = useOrgsStore()
-const { orgs } = storeToRefs(orgsStore)
-orgsStore.getAll()
+const usersStore = useUsersStore()
+const { users } = storeToRefs(usersStore)
+usersStore.getAll()
 
-const shipmentsStore = useShipmentsStore()
-const { shipment } = storeToRefs(shipmentsStore)
+const btasksStore = useBTasksStore()
+const { btask } = storeToRefs(btasksStore)
 if (!props.create) {
-  shipmentsStore.get(props.robotId)
+  btasksStore.get(props.btaskId)
 }
 
-const orgIdError = 'Выберите организацию. Сотрудники организации смогут отслеживать отправление.'
+const userIdError = 'Выберите пользователя.'
 const schema = Yup.object().shape({
   number: Yup.string().required('Укажите номер отправления'),
   status: isRegister() ? Yup.string().required('Выберите статус') : Yup.string(),
@@ -64,7 +64,7 @@ const schema = Yup.object().shape({
   location: Yup.string().required('Укажите место отправления'),
   date: Yup.string().required('Укажите дату'),
   ddate: Yup.string().required('Укажите ожидаемую дату прибытия'),
-  orgId: Yup.number(orgIdError).typeError(orgIdError).integer(orgIdError).required(orgIdError)
+  userId: Yup.number(userIdError).typeError(userIdError).integer(userIdError).required(userIdError)
 })
 
 function isRegister() {
@@ -72,19 +72,19 @@ function isRegister() {
 }
 
 function getTitle() {
-  return isRegister() ? 'Новое отправление' : 'Редактирование отправления'
+  return isRegister() ? 'Новый торговый робот' : 'Изменение параметров торгового робота'
 }
 
 function onSubmit(values, { setErrors }) {
   if (props.create) {
-    return shipmentsStore
+    return btasksStore
       .add(values)
       .then(() => {
         router.go(-1)
       })
       .catch((error) => setErrors({ apiError: error }))
   } else {
-    return shipmentsStore
+    return btasksStore
       .update(props.robotId, values)
       .then(() => {
         router.go(-1)
@@ -95,14 +95,14 @@ function onSubmit(values, { setErrors }) {
 
 const status = computed(() => {
   return {
-    number: props.create ? '' : shipment.value.number,
-    status: props.create ? stcodes.REGISTERED : shipment.value.status,
+    number: props.create ? '' : btask.value.number,
+    status: props.create ? stcodes.REGISTERED : btask.value.status,
     location: '_',
     date: moment().format('YYYY-MM-DD'),
-    ddate: props.create ? '' : shipment.value.ddate,
-    dest: props.create ? '' : shipment.value.dest,
+    ddate: props.create ? '' : btask.value.ddate,
+    dest: props.create ? '' : btask.value.dest,
     comment: '',
-    orgId: props.create ? '' : shipment.value.orgId
+    userId: props.create ? '' : btask.value.userId
   }
 })
 </script>
@@ -194,16 +194,16 @@ const status = computed(() => {
       </div>
 
       <div class="form-group">
-        <label for="orgId" class="label">Организация:</label>
+        <label for="userId" class="label">Организация:</label>
         <Field
-          name="orgId"
+          name="userId"
           as="select"
           class="form-control input select"
-          :class="{ 'is-invalid': errors.orgId }"
+          :class="{ 'is-invalid': errors.userId }"
         >
           <option value="">Выберите организацию:</option>
-          <option v-for="org in orgs" :key="org" :value="org.id">
-            {{ org.name }}
+          <option v-for="user in users" :key="user" :value="user.id">
+            {{ user.lastName }}
           </option>
         </Field>
       </div>
@@ -227,11 +227,11 @@ const status = computed(() => {
       <div v-if="errors.dest" class="alert alert-danger mt-3 mb-0">{{ errors.dest }}</div>
       <div v-if="errors.ddate" class="alert alert-danger mt-3 mb-0">{{ errors.ddate }}</div>
       <div v-if="errors.comment" class="alert alert-danger mt-3 mb-0">{{ errors.comment }}</div>
-      <div v-if="errors.orgId" class="alert alert-danger mt-3 mb-0">{{ errors.orgId }}</div>
+      <div v-if="errors.userId" class="alert alert-danger mt-3 mb-0">{{ errors.userId }}</div>
       <div v-if="errors.apiError" class="alert alert-danger mt-3 mb-0">{{ errors.apiError }}</div>
     </Form>
   </div>
-  <div v-if="orgs?.loading" class="text-center m-5">
+  <div v-if="users?.loading" class="text-center m-5">
     <span class="spinner-border spinner-border-lg align-center"></span>
   </div>
 </template>

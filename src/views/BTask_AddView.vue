@@ -24,9 +24,9 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-import Robot from '@/components/Robot_Settings.vue'
+import BTask from '@/components/BTask_Settings.vue'
 </script>
 
 <template>
-  <Robot :create="true" />
+  <BTask :create="true" />
 </template>

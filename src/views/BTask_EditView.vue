@@ -24,9 +24,17 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-import Robots from '@/components/Robots_List.vue'
+import BTask from '@/components/BTask_Settings.vue'
+
+const props = defineProps({
+  btaskId: {
+    type: String,
+    required: true
+  }
+})
+const id = parseInt(props.btaskId)
 </script>
 
 <template>
-  <Robots />
+  <BTask :create="false" :btaskId="id" />
 </template>

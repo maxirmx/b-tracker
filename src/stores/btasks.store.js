@@ -27,40 +27,40 @@ import { defineStore } from 'pinia'
 import { fetchWrapper } from '@/helpers/fetch.wrapper.js'
 import { apiUrl } from '@/helpers/config.js'
 
-const baseUrl = `${apiUrl}/shipments`
+const baseUrl = `${apiUrl}/btasks`
 
-export const useShipmentsStore = defineStore({
-  id: 'shipments',
+export const useBTasksStore = defineStore({
+  id: 'btasks',
   state: () => ({
-    shipments: {},
-    shipment: {}
+    btasks: {},
+    btask: {}
   }),
   actions: {
-    async add(shipment) {
-      await fetchWrapper.post(`${baseUrl}/add`, shipment)
+    async add(btask) {
+      await fetchWrapper.post(`${baseUrl}/add`, btask)
     },
-    async getAll(archieve = false) {
-      this.shipments = { loading: true }
+    async getAll() {
+      this.btasks = { loading: true }
       try {
-        const url = baseUrl + (archieve ? '/archieve' : '')
-        this.shipments = await fetchWrapper.get(url)
+        const url = baseUrl
+        this.btasks = await fetchWrapper.get(url)
       } catch (error) {
-        this.shipments = { error }
+        this.btasks = { error }
       }
     },
     async get(id) {
-      this.shipment = { loading: true }
+      this.btask = { loading: true }
       try {
-        this.shipment = await fetchWrapper.get(`${baseUrl}/${id}`)
+        this.btask = await fetchWrapper.get(`${baseUrl}/${id}`)
       } catch (error) {
-        this.shipment = { error }
+        this.btask = { error }
       }
     },
     async delete(id) {
       try {
         await fetchWrapper.delete(`${baseUrl}/${id}`, {})
       } catch (error) {
-        this.shipment = { error }
+        this.btask = { error }
       }
     },
     async update(id, params) {
