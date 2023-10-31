@@ -28,11 +28,10 @@ import { computed } from 'vue'
 import { Form, Field } from 'vee-validate'
 import { storeToRefs } from 'pinia'
 import * as Yup from 'yup'
-import moment from 'moment'
 import router from '@/router'
-import { stcodes, statuses } from '@/helpers/statuses.js'
+import { strategies } from '@/helpers/strategies.js'
 
-import { useUsersStore } from '@/stores/users.store.js'
+import { useAuthStore } from '@/stores/auth.store.js'
 import { useBTasksStore } from '@/stores/btasks.store.js'
 
 const props = defineProps({
@@ -46,24 +45,19 @@ const props = defineProps({
   }
 })
 
-const usersStore = useUsersStore()
-const { users } = storeToRefs(usersStore)
-usersStore.getAll()
-
+const authStore = useAuthStore()
 const btasksStore = useBTasksStore()
 const { btask } = storeToRefs(btasksStore)
 if (!props.create) {
   btasksStore.get(props.btaskId)
 }
 
-const userIdError = 'Выберите пользователя.'
+const userIdError = 'Не удалось определить идентификатор пользователя. Это внутренняя ошибка.'
 const schema = Yup.object().shape({
-  number: Yup.string().required('Укажите номер отправления'),
-  status: isRegister() ? Yup.string().required('Выберите статус') : Yup.string(),
-  dest: Yup.string().required('Укажите пункт назначения'),
-  location: Yup.string().required('Укажите место отправления'),
-  date: Yup.string().required('Укажите дату'),
-  ddate: Yup.string().required('Укажите ожидаемую дату прибытия'),
+  strategy: Yup.string().required('Выберите статус'),
+  symbol1: Yup.string().required('Введите символ 1'),
+  symbol2: Yup.string().required('Введите символ 2'),
+  threshold: Yup.number().required('Введите порог'),
   userId: Yup.number(userIdError).typeError(userIdError).integer(userIdError).required(userIdError)
 })
 
@@ -95,16 +89,14 @@ function onSubmit(values, { setErrors }) {
 
 const status = computed(() => {
   return {
-    number: props.create ? '' : btask.value.number,
-    status: props.create ? stcodes.REGISTERED : btask.value.status,
-    location: '_',
-    date: moment().format('YYYY-MM-DD'),
-    ddate: props.create ? '' : btask.value.ddate,
-    dest: props.create ? '' : btask.value.dest,
-    comment: '',
-    userId: props.create ? '' : btask.value.userId
+    strategy: props.create ? '' : btask.value.strategy,
+    symbol1: props.create ? '' : btask.value.symbol1,
+    symbol2: props.create ? '' : btask.value.symbol2,
+    threshold: props.create ? '': btask.value.threshold,
+    userId: props.create ? authStore.user?.id : btask.value.userId
   }
 })
+
 </script>
 
 <template>
@@ -118,94 +110,49 @@ const status = computed(() => {
       v-slot="{ errors, isSubmitting }"
     >
       <div class="form-group">
-        <label for="number" class="label">Номер отправления:</label>
+        <label for="strategy" class="label">Стратегия:</label>
         <Field
-          name="number"
-          type="text"
-          class="form-control input"
-          :class="{ 'is-invalid': errors.number }"
-          placeholder="Номер отправления"
-        />
-      </div>
-      <div class="form-group" v-if="isRegister()">
-        <label for="status" class="label">Статус:</label>
-        <Field
-          name="status"
+          name="strategy"
           as="select"
           class="form-control input select"
-          :class="{ 'is-invalid': errors.status }"
+          :class="{ 'is-invalid': errors.strategy }"
         >
-          <option value="">Выберите статус</option>
-          <option v-for="status in statuses.items" :key="status" :value="status.id">
-            {{ status.name }}
+          <option value="">Выберите стратегию</option>
+          <option v-for="strategy in strategies.items" :key="strategy" :value="strategy.name">
+            {{ strategy.name }}
           </option>
         </Field>
       </div>
-      <div class="form-group" v-if="isRegister()">
-        <label for="location" class="label">Место отправления:</label>
+      <div class="form-group">
+        <label for="symbol1" class="label">Базовая криптовалюта:</label>
         <Field
-          name="location"
+          name="symbol1"
           type="text"
           class="form-control input"
-          :class="{ 'is-invalid': errors.location }"
-          placeholder="Город, Страна"
-        />
-      </div>
-
-      <div class="form-group" v-if="isRegister()">
-        <label for="date" class="label">Дата:</label>
-        <Field
-          name="date"
-          type="date"
-          class="form-control input"
-          :class="{ 'is-invalid': errors.date }"
-        />
-      </div>
-
-      <div class="form-group" v-if="isRegister()">
-        <label for="comment" class="label">Комментарий:</label>
-        <Field
-          name="comment"
-          type="text"
-          class="form-control input"
-          :class="{ 'is-invalid': errors.comment }"
+          :class="{ 'is-invalid': errors.symbol1 }"
+          placeholder="Символ 1"
         />
       </div>
 
       <div class="form-group">
-        <label for="dest" class="label">Пункт назначения:</label>
+        <label for="symbol2" class="label">Криптовалюта котировки:</label>
         <Field
-          name="dest"
+          name="symbol2"
           type="text"
           class="form-control input"
-          :class="{ 'is-invalid': errors.dest }"
-          placeholder="Город, Страна"
+          :class="{ 'is-invalid': errors.symbol2 }"
+          placeholder="Символ 2"
         />
       </div>
 
       <div class="form-group">
-        <label for="ddate" class="label">Ожидаемая дата прибытия:</label>
+        <label for="threshold" class="label">Порог:</label>
         <Field
-          name="ddate"
-          type="date"
+          name="threshold"
+          type="text"
           class="form-control input"
-          :class="{ 'is-invalid': errors.ddate }"
+          :class="{ 'is-invalid': errors.threshold }"
         />
-      </div>
-
-      <div class="form-group">
-        <label for="userId" class="label">Организация:</label>
-        <Field
-          name="userId"
-          as="select"
-          class="form-control input select"
-          :class="{ 'is-invalid': errors.userId }"
-        >
-          <option value="">Выберите организацию:</option>
-          <option v-for="user in users" :key="user" :value="user.id">
-            {{ user.lastName }}
-          </option>
-        </Field>
       </div>
 
       <div class="form-group">
@@ -221,17 +168,12 @@ const status = computed(() => {
       <div v-if="errors.number" class="alert alert-danger mt-3 mb-0">
         {{ errors.number }}
       </div>
-      <div v-if="errors.status" class="alert alert-danger mt-3 mb-0">{{ errors.status }}</div>
-      <div v-if="errors.location" class="alert alert-danger mt-3 mb-0">{{ errors.location }}</div>
-      <div v-if="errors.date" class="alert alert-danger mt-3 mb-0">{{ errors.date }}</div>
-      <div v-if="errors.dest" class="alert alert-danger mt-3 mb-0">{{ errors.dest }}</div>
-      <div v-if="errors.ddate" class="alert alert-danger mt-3 mb-0">{{ errors.ddate }}</div>
-      <div v-if="errors.comment" class="alert alert-danger mt-3 mb-0">{{ errors.comment }}</div>
+      <div v-if="errors.strategy" class="alert alert-danger mt-3 mb-0">{{ errors.strategy }}</div>
+      <div v-if="errors.symbol1" class="alert alert-danger mt-3 mb-0">{{ errors.symbol1 }}</div>
+      <div v-if="errors.symbol2" class="alert alert-danger mt-3 mb-0">{{ errors.symbol2 }}</div>
+      <div v-if="errors.threshold" class="alert alert-danger mt-3 mb-0">{{ errors.threshold }}</div>
       <div v-if="errors.userId" class="alert alert-danger mt-3 mb-0">{{ errors.userId }}</div>
       <div v-if="errors.apiError" class="alert alert-danger mt-3 mb-0">{{ errors.apiError }}</div>
     </Form>
-  </div>
-  <div v-if="users?.loading" class="text-center m-5">
-    <span class="spinner-border spinner-border-lg align-center"></span>
   </div>
 </template>

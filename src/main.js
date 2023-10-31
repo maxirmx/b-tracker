@@ -44,7 +44,6 @@ import {
   faPenToSquare,
   faPlus,
   faTrashCan,
-  faTruckFast,
   faUserPlus,
   faXmark
 } from '@fortawesome/free-solid-svg-icons'
@@ -61,7 +60,6 @@ library.add(
   faPenToSquare,
   faPlus,
   faTrashCan,
-  faTruckFast,
   faUserPlus,
   faXmark
 )

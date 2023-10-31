@@ -29,7 +29,7 @@ import moment from 'moment'
 import { VDataTable } from 'vuetify/lib/labs/components.mjs'
 import router from '@/router'
 import { storeToRefs } from 'pinia'
-import { statuses } from '@/helpers/statuses.js'
+import { strategies } from '@/helpers/strategies.js'
 import { itemsPerPageOptions } from '@/helpers/items.per.page.js'
 import { mdiMagnify } from '@mdi/js'
 
@@ -49,24 +49,13 @@ btasksStore.getAll(false)
 const alertStore = useAlertStore()
 const { alert } = storeToRefs(alertStore)
 
-function getStatus(item) {
-  return statuses.getName(item.status)
-}
-
-function getDate(date) {
-  return moment(date, 'YYYY-MM-DD').format('DD.MM.YYYY')
-}
-
-function editShipment(item) {
+function editBTask(item) {
   router.push('btask/edit/' + item.id)
 }
 
-function viewHistory(item) {
-  router.push('btask/' + item.id)
-}
-
-async function deleteShipment(item) {
-  const content = 'Удалить торгового робота "' + item['number'] + '" ?'
+async function deleteBTask(item) {
+  const content = 'Удалить торгового робота "' + item.strategy + ' ' +
+                  item.symbol1 + '/' + item.symbol2 + '" ?'
   const result = await confirm({
     title: 'Подтверждение',
     confirmationText: 'Удалить',
@@ -96,34 +85,25 @@ function filterShipments(value, query, item) {
   if (query == null) return false
   const q = query.toLocaleUpperCase()
   if (
-    item.selectable.origin.toLocaleUpperCase().indexOf(q) !== -1 ||
-    item.selectable.dest.toLocaleUpperCase().indexOf(q) !== -1 ||
-    item.selectable.number.toLocaleUpperCase().indexOf(q) !== -1 ||
-    (item.selectable.name.toLocaleUpperCase().indexOf(q) !== -1 && authStore.user?.isManager) ||
-    moment(item.selectable.ddate, 'YYYY-MM-DD').format('DD.MM.YYYY').indexOf(q) !== -1 ||
-    moment(item.selectable.date, 'YYYY-MM-DD').format('DD.MM.YYYY').indexOf(q) !== -1 ||
-    item.selectable.location.toLocaleUpperCase().indexOf(q) !== -1 ||
-    getStatus(item.selectable).toLocaleUpperCase().indexOf(q) !== -1
+    item.strategy.toLocaleUpperCase().indexOf(q) !== -1 ||
+    item.symbol1.toLocaleUpperCase().indexOf(q) !== -1 ||
+    item.symbol2.toLocaleUpperCase().indexOf(q) !== -1 ||
+    item.threshold.toLocaleUpperCase().indexOf(q) !== -1
   ) {
     return true
   }
   return false
 }
 
-const hd1 = { title: 'Номер', align: 'start', key: 'number' }
-const hd2 = { title: 'Маршрут', align: 'start', key: 'route' }
-const hd3 = { title: 'Ожидаемая дата доставки', align: 'start', key: 'ddate' }
-const hd4 = { title: 'Клиент', align: 'start', key: 'name' }
-const hd5 = { title: 'Место', align: 'start', key: 'location' }
-const hd6 = { title: 'Статус', align: 'start', key: 'statuses', sortable: false }
-const hd7 = { title: 'Текущая дата', align: 'start', key: 'date' }
-const hd8 = { title: '', align: 'center', key: 'actions1', sortable: false }
-const hd9 = { title: '', align: 'center', key: 'actions2', sortable: false }
-const hdA = { title: '', align: 'center', key: 'actions3', sortable: false }
-
-const headers = authStore.user?.isManager
-  ? [hd1, hd2, hd3, hd4, hd5, hd6, hd7, hd8, hd9, hdA]
-  : [hd1, hd2, hd3, hd5, hd6, hd7, hd8, hd9, hdA]
+const headers = [
+{ title: '', align: 'center', key: 'icon' },
+{ title: 'Стратегия', align: 'start', key: 'strategy' },
+{ title: 'Базовая криптовалюта', align: 'start', key: 'symbol1' },
+{ title: 'Криптовалюта котировки', align: 'start', key: 'symbol2' },
+{ title: 'Порог', align: 'start', key: 'threshold' },
+{ title: '', align: 'center', key: 'actions2', sortable: false, width: '5%' },
+{ title: '', align: 'center', key: 'actions3', sortable: false, width: '5%' },
+]
 </script>
 
 <template>
@@ -135,7 +115,7 @@ const headers = authStore.user?.isManager
       <router-link :to="'/btask/add'" class="link">
         <font-awesome-icon
           size="1x"
-          icon="fa-solid fa-truck-fast"
+          icon="fa-solid fa-plus"
           class="link"
         />&nbsp;&nbsp;&nbsp;Создать торгового робота
       </router-link>
@@ -158,35 +138,13 @@ const headers = authStore.user?.isManager
         class="elevation-1"
         pa-0
       >
-        <template v-slot:[`item.route`]="{ item }">
-          {{ item.selectable.origin }} - {{ item.selectable.dest }}
+        <template v-slot:[`item.icon`]="{ item }">
+          <component :is="strategies.getIconByName(item.strategy)"></component>
         </template>
 
-        <template v-slot:[`item.ddate`]="{ item }">
-          {{ getDate(item.selectable.ddate) }}
-        </template>
-
-        <template v-slot:[`item.date`]="{ item }">
-          {{ getDate(item.selectable.date) }}
-        </template>
-
-        <template v-slot:[`item.statuses`]="{ item }">
-          {{ getStatus(item.selectable) }}
-        </template>
-
-        <template v-slot:[`item.actions1`]="{ item }">
-          <button @click="viewHistory(item.selectable)" class="anti-btn">
-            <font-awesome-icon
-              size="1x"
-              icon="fa-solid fa-arrow-right-to-bracket"
-              class="anti-btn"
-            />
-          </button>
-        </template>
         <template v-slot:[`item.actions2`]="{ item }">
           <button
-            v-if="authStore.user?.isAdmin"
-            @click="editShipment(item.selectable)"
+            @click="editBTask(item)"
             class="anti-btn"
           >
             <font-awesome-icon size="1x" icon="fa-solid fa-pen" class="anti-btn" />
@@ -194,8 +152,7 @@ const headers = authStore.user?.isManager
         </template>
         <template v-slot:[`item.actions3`]="{ item }">
           <button
-            v-if="authStore.user?.isAdmin"
-            @click="deleteShipment(item.selectable)"
+            @click="deleteBTask(item)"
             class="anti-btn"
           >
             <font-awesome-icon size="1x" icon="fa-solid fa-trash-can" class="anti-btn" />
