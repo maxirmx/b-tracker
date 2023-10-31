@@ -49,6 +49,7 @@ const { alert } = storeToRefs(alertStore)
 function onSubmit(values, { setErrors }) {
   const authStore = useAuthStore()
   const { login_email, login_password } = values
+
   return authStore
     .login(login_email, login_password)
     .then(() => router.push('/shipments'))

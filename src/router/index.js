@@ -74,59 +74,20 @@ const router = createRouter({
       props: true
     },
     {
-      path: '/orgs',
-      name: 'Организации',
-      component: () => import('@/views/Orgs_View.vue')
+      path: '/robots',
+      name: 'Роботы',
+      component: () => import('@/views/Robots_View.vue')
     },
     {
-      path: '/org/add',
-      name: 'Добавить организацию',
-      component: () => import('@/views/Org_AddView.vue')
-    },
-    {
-      path: '/org/edit/:orgId',
-      name: 'Редактировать информацию об организации',
-      component: () => import('@/views/Org_EditView.vue'),
+      path: '/robot/edit/:robotId',
+      name: 'Настройка робота',
+      component: () => import('@/views/Robots_EditView.vue'),
       props: true
     },
     {
-      path: '/status/add/:shipmentId',
-      name: 'Добавить статус отправления',
-      component: () => import('@/views/ShipmentStatus_AddView.vue'),
-      props: true
-    },
-    {
-      path: '/status/edit/:shipmentId/:statusId',
-      name: 'Изменить статус отправления',
-      component: () => import('@/views/ShipmentStatus_EditView.vue'),
-      props: true
-    },
-    {
-      path: '/shipments',
-      name: 'Отправления',
-      component: () => import('@/views/Shipments_View.vue')
-    },
-    {
-      path: '/archieve',
-      name: 'Архив',
-      component: () => import('@/views/Archieve_View.vue')
-    },
-    {
-      path: '/shipment/edit/:shipmentId',
-      name: 'Редактировать информацию об отправлении',
-      component: () => import('@/views/Shipment_EditView.vue'),
-      props: true
-    },
-    {
-      path: '/shipment/:shipmentId',
-      name: 'Отправлениe',
-      component: () => import('@/views/Shipment_View.vue'),
-      props: true
-    },
-    {
-      path: '/shipment/add',
-      name: 'Добавить отправлениe',
-      component: () => import('@/views/Shipment_AddView.vue')
+      path: '/robot/add',
+      name: 'Добавить робота',
+      component: () => import('@/views/Robots_AddView.vue')
     }
   ]
 })
@@ -140,7 +101,7 @@ router.beforeEach(async (to) => {
     return auth
       .re()
       .then(() => {
-        return auth.re_tgt == 'register' ? '/shipments/' : '/user/edit/' + auth.user.id
+        return auth.re_tgt == 'register' ? '/users/' : '/user/edit/' + auth.user.id
       })
       .catch((error) => {
         router.push('/login').then(() => {
@@ -175,14 +136,10 @@ router.beforeEach(async (to) => {
     }
     // (3.1) No need to login, fall thtrough to shipments
     hideDrawer()
-    return '/shipments'
+    return '/robots'
   }
 
   // (3.1) Do as requested
-  const widePages = ['/shipments', '/archieve']
-  if (widePages.includes(to.path)) {
-    hideDrawer()
-  }
   return true
 })
 
