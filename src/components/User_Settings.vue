@@ -93,7 +93,8 @@ function asAdmin() {
 }
 
 function getTitle() {
-  return isRegister() ? 'Регистрация' : 'Настройки'
+  return isRegister() ?
+      (asAdmin() ? 'Регистрация пользователя': 'Регистрация') : 'Настройки'
 }
 
 function getButton() {

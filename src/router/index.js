@@ -135,7 +135,6 @@ router.beforeEach(async (to) => {
       return true
     }
     // (3.1) No need to login, fall thtrough to btasks
-    hideDrawer()
     return '/btasks'
   }
 

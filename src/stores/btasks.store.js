@@ -29,6 +29,11 @@ import { apiUrl } from '@/helpers/config.js'
 
 const baseUrl = `${apiUrl}/btasks`
 
+function translate(param) {
+  param.isRunning = param.isRunning === 'RUNNING'
+  return param
+}
+
 export const useBTasksStore = defineStore({
   id: 'btasks',
   state: () => ({
@@ -36,7 +41,10 @@ export const useBTasksStore = defineStore({
     btask: {}
   }),
   actions: {
-    async add(btask) {
+    async add(btask, trnslt = false) {
+      if (trnslt) {
+        btask = translate(btask)
+      }
       await fetchWrapper.post(`${baseUrl}/add`, btask)
     },
     async getAll() {
@@ -48,10 +56,13 @@ export const useBTasksStore = defineStore({
         this.btasks = { error }
       }
     },
-    async get(id) {
+    async get(id, trnslt = false) {
       this.btask = { loading: true }
       try {
         this.btask = await fetchWrapper.get(`${baseUrl}/${id}`)
+        if (trnslt) {
+          this.btask.isRunning = this.user.isRunning ? 'RUNNING' : 'JERK'
+        }
       } catch (error) {
         this.btask = { error }
       }
@@ -63,7 +74,10 @@ export const useBTasksStore = defineStore({
         this.btask = { error }
       }
     },
-    async update(id, params) {
+    async update(id, params, trnslt = false) {
+      if (trnslt) {
+        params = translate(params)
+      }
       await fetchWrapper.put(`${baseUrl}/${id}`, params)
     }
   }

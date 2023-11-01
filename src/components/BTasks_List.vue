@@ -24,8 +24,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-import moment from 'moment'
-
 import { VDataTable } from 'vuetify/lib/labs/components.mjs'
 import router from '@/router'
 import { storeToRefs } from 'pinia'
@@ -54,8 +52,8 @@ function editBTask(item) {
 }
 
 async function deleteBTask(item) {
-  const content = 'Удалить торгового робота "' + item.strategy + ' ' +
-                  item.symbol1 + '/' + item.symbol2 + '" ?'
+  const content =
+    'Удалить торгового робота "' + item.strategy + ' ' + item.symbol1 + '/' + item.symbol2 + '" ?'
   const result = await confirm({
     title: 'Подтверждение',
     confirmationText: 'Удалить',
@@ -96,18 +94,19 @@ function filterShipments(value, query, item) {
 }
 
 const headers = [
-{ title: '', align: 'center', key: 'icon' },
-{ title: 'Стратегия', align: 'start', key: 'strategy' },
-{ title: 'Базовая криптовалюта', align: 'start', key: 'symbol1' },
-{ title: 'Криптовалюта котировки', align: 'start', key: 'symbol2' },
-{ title: 'Порог', align: 'start', key: 'threshold' },
-{ title: '', align: 'center', key: 'actions2', sortable: false, width: '5%' },
-{ title: '', align: 'center', key: 'actions3', sortable: false, width: '5%' },
+  { title: 'Стратегия', align: 'center', key: 'icon' },
+  { title: 'Стратегия', align: 'start', key: 'strategy' },
+  { title: 'Базовая криптовалюта', align: 'center', key: 'symbol1' },
+  { title: 'Криптовалюта котировки', align: 'center', key: 'symbol2' },
+  { title: 'Порог', align: 'center', key: 'threshold' },
+  { title: 'Состояние', align: 'center', key: 'isRunning' },
+  //{ title: '', align: 'center', key: 'actionEdit', sortable: false, width: '5%' },
+  { title: '', align: 'center', key: 'actionDelete', sortable: false, width: '5%' }
 ]
 </script>
 
 <template>
-  <div class="settings table-3">
+  <div class="settings table-2">
     <h1 class="orange">Торговые роботы</h1>
     <hr class="hr" />
 
@@ -142,25 +141,25 @@ const headers = [
           <component :is="strategies.getIconByName(item.strategy)"></component>
         </template>
 
-        <template v-slot:[`item.actions2`]="{ item }">
-          <button
-            @click="editBTask(item)"
-            class="anti-btn"
-          >
+        <template v-slot:[`item.isRunning`]="{ item }">
+          {{ item.isRunning ? 'Запущен' : 'Остановлен' }}
+        </template>
+
+        <template v-slot:[`item.actionEdit`]="{ item }">
+          <button @click="editBTask(item)" class="anti-btn">
             <font-awesome-icon size="1x" icon="fa-solid fa-pen" class="anti-btn" />
           </button>
         </template>
-        <template v-slot:[`item.actions3`]="{ item }">
-          <button
-            @click="deleteBTask(item)"
-            class="anti-btn"
-          >
+        <template v-slot:[`item.actionDelete`]="{ item }">
+          <button @click="deleteBTask(item)" class="anti-btn">
             <font-awesome-icon size="1x" icon="fa-solid fa-trash-can" class="anti-btn" />
           </button>
         </template>
       </v-data-table>
       <v-spacer></v-spacer>
+      <div v-if="!btasks?.length" class="text-center m-5">Список торговых роботов пуст пуст</div>
       <v-text-field
+        v-if="btasks?.length"
         v-model="authStore.btasks_search"
         :append-inner-icon="mdiMagnify"
         label="Поиск по любой информации о торговом роботе"

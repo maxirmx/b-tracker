@@ -39,12 +39,12 @@ export const strategies = reactive({
   items: [
     {
       id: stcodes.STOP_LOSS,
-      name: 'Stop-loss',
+      name: 'stop-loss',
       icon: markRaw(StopLossIcon)
     },
     {
       id: stcodes.TAKE_PROFIT,
-      name: 'Take-profit',
+      name: 'take-profit',
       icon: markRaw(TakeProfitIcon)
     }
   ],

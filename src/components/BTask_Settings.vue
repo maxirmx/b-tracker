@@ -24,7 +24,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { Form, Field } from 'vee-validate'
 import { storeToRefs } from 'pinia'
 import * as Yup from 'yup'
@@ -49,7 +49,7 @@ const authStore = useAuthStore()
 const btasksStore = useBTasksStore()
 const { btask } = storeToRefs(btasksStore)
 if (!props.create) {
-  btasksStore.get(props.btaskId)
+  btasksStore.get(props.btaskId, true)
 }
 
 const userIdError = 'Не удалось определить идентификатор пользователя. Это внутренняя ошибка.'
@@ -72,14 +72,14 @@ function getTitle() {
 function onSubmit(values, { setErrors }) {
   if (props.create) {
     return btasksStore
-      .add(values)
+      .add(values, true)
       .then(() => {
         router.go(-1)
       })
       .catch((error) => setErrors({ apiError: error }))
   } else {
     return btasksStore
-      .update(props.robotId, values)
+      .update(props.robotId, values, true)
       .then(() => {
         router.go(-1)
       })
@@ -92,11 +92,11 @@ const status = computed(() => {
     strategy: props.create ? '' : btask.value.strategy,
     symbol1: props.create ? '' : btask.value.symbol1,
     symbol2: props.create ? '' : btask.value.symbol2,
-    threshold: props.create ? '': btask.value.threshold,
-    userId: props.create ? authStore.user?.id : btask.value.userId
+    threshold: props.create ? '' : btask.value.threshold,
+    userId: props.create ? authStore.user?.id : btask.value.userId,
+    isRunning: props.create ? 'JERK' : btask.value.isRunning
   }
 })
-
 </script>
 
 <template>
@@ -112,6 +112,7 @@ const status = computed(() => {
       <div class="form-group">
         <label for="strategy" class="label">Стратегия:</label>
         <Field
+          id="strategy"
           name="strategy"
           as="select"
           class="form-control input select"
@@ -126,33 +127,48 @@ const status = computed(() => {
       <div class="form-group">
         <label for="symbol1" class="label">Базовая криптовалюта:</label>
         <Field
+          id="symbol1"
           name="symbol1"
           type="text"
           class="form-control input"
           :class="{ 'is-invalid': errors.symbol1 }"
-          placeholder="Символ 1"
+          placeholder="Базовая криптовалюта"
         />
       </div>
 
       <div class="form-group">
         <label for="symbol2" class="label">Криптовалюта котировки:</label>
         <Field
+          id="symbol2"
           name="symbol2"
           type="text"
           class="form-control input"
           :class="{ 'is-invalid': errors.symbol2 }"
-          placeholder="Символ 2"
+          placeholder="Криптовалюта котировки"
         />
       </div>
 
       <div class="form-group">
         <label for="threshold" class="label">Порог:</label>
         <Field
+          id="threshold"
           name="threshold"
           type="text"
           class="form-control input"
           :class="{ 'is-invalid': errors.threshold }"
         />
+      </div>
+
+      <div  class="form-group">
+        <label for="isRunning" class="label">Состояние</label>
+        <Field
+          id="isRunning"
+          name="isRunning"
+          type="checkbox"
+          class="checkbox checkbox-styled"
+          value="RUNNING"
+        />
+        <label for="isRunning">Запущен</label>
       </div>
 
       <div class="form-group">
@@ -172,6 +188,7 @@ const status = computed(() => {
       <div v-if="errors.symbol1" class="alert alert-danger mt-3 mb-0">{{ errors.symbol1 }}</div>
       <div v-if="errors.symbol2" class="alert alert-danger mt-3 mb-0">{{ errors.symbol2 }}</div>
       <div v-if="errors.threshold" class="alert alert-danger mt-3 mb-0">{{ errors.threshold }}</div>
+      <div v-if="errors.isRunning" class="alert alert-danger mt-3 mb-0">{{ errors.isRunning }}</div>
       <div v-if="errors.userId" class="alert alert-danger mt-3 mb-0">{{ errors.userId }}</div>
       <div v-if="errors.apiError" class="alert alert-danger mt-3 mb-0">{{ errors.apiError }}</div>
     </Form>
