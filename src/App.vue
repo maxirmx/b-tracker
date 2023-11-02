@@ -1,7 +1,7 @@
 <script setup>
 // Copyright (C) 2023 Maxim [maxirmx] Samsonov (www.sw.consulting)
 // All rights reserved.
-// This file is a part of s-tracker applcation
+// This file is a part of b-tracker applcation
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -51,38 +51,40 @@ function getUserName() {
         authStore.user.patronimic
     : ''
 }
+
+/*<v-list-item>
+          <RouterLink to="/register" class="link">Регистрация</RouterLink>
+        </v-list-item>
+        <v-list-item>
+          <RouterLink to="/recover" class="link">Восстановление пароля</RouterLink>
+        </v-list-item>
+*/
 </script>
 
 <template>
   <v-app class="rounded rounded-md">
     <v-app-bar>
       <template v-slot:prepend>
-        <v-app-bar-nav-icon @click.stop="toggleDrawer()" color="orange"></v-app-bar-nav-icon>
+        <v-app-bar-nav-icon @click.stop="toggleDrawer()" color="blue-darken-2"></v-app-bar-nav-icon>
       </template>
-      <v-app-bar-title class="orange">Track and trace {{ getUserName() }} </v-app-bar-title>
+      <v-app-bar-title class="orange">Trade and Smile {{ getUserName() }} </v-app-bar-title>
       <v-spacer />
     </v-app-bar>
     <v-navigation-drawer v-model="drawer" elevation="4">
       <template v-slot:prepend>
         <div class="pa-2" v-if="height > 480">
-          <img alt="Сargo Management" class="logo" src="@/assets/logo.svg" />
+          <img alt="Сargo Management" class="logo" src="@/assets/logo.png" />
         </div>
       </template>
       <v-list v-if="authStore.user">
         <v-list-item>
-          <RouterLink to="/shipments" class="link">Отправления</RouterLink>
-        </v-list-item>
-        <v-list-item>
-          <RouterLink to="/archieve" class="link">Архив</RouterLink>
+          <RouterLink to="/btasks" class="link">Роботы</RouterLink>
         </v-list-item>
         <v-list-item v-if="!authStore.user.isAdmin">
           <RouterLink :to="'/user/edit/' + authStore.user.id" class="link">Настройки</RouterLink>
         </v-list-item>
         <v-list-item v-if="authStore.user.isAdmin">
           <RouterLink to="/users" class="link">Пользователи</RouterLink>
-        </v-list-item>
-        <v-list-item v-if="authStore.user.isAdmin">
-          <RouterLink to="/orgs" class="link">Организации</RouterLink>
         </v-list-item>
         <v-list-item>
           <RouterLink to="/login" custom v-slot="{ href }">
@@ -93,12 +95,6 @@ function getUserName() {
       <v-list v-if="!authStore.user">
         <v-list-item>
           <RouterLink to="/login" class="link">Вход</RouterLink>
-        </v-list-item>
-        <v-list-item>
-          <RouterLink to="/register" class="link">Регистрация</RouterLink>
-        </v-list-item>
-        <v-list-item>
-          <RouterLink to="/recover" class="link">Восстановление пароля</RouterLink>
         </v-list-item>
       </v-list>
       <template v-slot:append>
@@ -124,6 +120,7 @@ function getUserName() {
 .logo {
   margin: 1rem;
   display: block;
+  width: 90%;
 }
 
 .version {

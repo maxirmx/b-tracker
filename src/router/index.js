@@ -1,6 +1,6 @@
 // Copyright (C) 2023 Maxim [maxirmx] Samsonov  (www.sw.consulting)
 // All rights reserved.
-// This file is a part of s-tracker applcation
+// This file is a part of b-tracker applcation
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -26,7 +26,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth.store.js'
 import { useAlertStore } from '@/stores/alert.store.js'
-import { hideDrawer } from '@/helpers/drawer.js'
 
 const publicPages = ['/recover', '/register']
 const loginPages = ['/login']
@@ -74,59 +73,20 @@ const router = createRouter({
       props: true
     },
     {
-      path: '/orgs',
-      name: 'Организации',
-      component: () => import('@/views/Orgs_View.vue')
+      path: '/btasks',
+      name: 'Роботы',
+      component: () => import('@/views/BTasks_View.vue')
     },
     {
-      path: '/org/add',
-      name: 'Добавить организацию',
-      component: () => import('@/views/Org_AddView.vue')
-    },
-    {
-      path: '/org/edit/:orgId',
-      name: 'Редактировать информацию об организации',
-      component: () => import('@/views/Org_EditView.vue'),
+      path: '/btask/edit/:btaskId',
+      name: 'Настройка робота',
+      component: () => import('@/views/BTask_EditView.vue'),
       props: true
     },
     {
-      path: '/status/add/:shipmentId',
-      name: 'Добавить статус отправления',
-      component: () => import('@/views/ShipmentStatus_AddView.vue'),
-      props: true
-    },
-    {
-      path: '/status/edit/:shipmentId/:statusId',
-      name: 'Изменить статус отправления',
-      component: () => import('@/views/ShipmentStatus_EditView.vue'),
-      props: true
-    },
-    {
-      path: '/shipments',
-      name: 'Отправления',
-      component: () => import('@/views/Shipments_View.vue')
-    },
-    {
-      path: '/archieve',
-      name: 'Архив',
-      component: () => import('@/views/Archieve_View.vue')
-    },
-    {
-      path: '/shipment/edit/:shipmentId',
-      name: 'Редактировать информацию об отправлении',
-      component: () => import('@/views/Shipment_EditView.vue'),
-      props: true
-    },
-    {
-      path: '/shipment/:shipmentId',
-      name: 'Отправлениe',
-      component: () => import('@/views/Shipment_View.vue'),
-      props: true
-    },
-    {
-      path: '/shipment/add',
-      name: 'Добавить отправлениe',
-      component: () => import('@/views/Shipment_AddView.vue')
+      path: '/btask/add',
+      name: 'Добавить робота',
+      component: () => import('@/views/BTask_AddView.vue')
     }
   ]
 })
@@ -140,7 +100,7 @@ router.beforeEach(async (to) => {
     return auth
       .re()
       .then(() => {
-        return auth.re_tgt == 'register' ? '/shipments/' : '/user/edit/' + auth.user.id
+        return auth.re_tgt == 'register' ? '/users/' : '/user/edit/' + auth.user.id
       })
       .catch((error) => {
         router.push('/login').then(() => {
@@ -173,16 +133,11 @@ router.beforeEach(async (to) => {
     if (!auth.user) {
       return true
     }
-    // (3.1) No need to login, fall thtrough to shipments
-    hideDrawer()
-    return '/shipments'
+    // (3.1) No need to login, fall thtrough to btasks
+    return '/btasks'
   }
 
   // (3.1) Do as requested
-  const widePages = ['/shipments', '/archieve']
-  if (widePages.includes(to.path)) {
-    hideDrawer()
-  }
   return true
 })
 

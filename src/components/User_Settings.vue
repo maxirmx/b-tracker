@@ -1,7 +1,7 @@
 <script setup>
 // Copyright (C) 2023 Maxim [maxirmx] Samsonov (www.sw.consulting)
 // All rights reserved.
-// This file is a part of s-tracker applcation
+// This file is a part of b-tracker applcation
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -24,16 +24,15 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 
 import router from '@/router'
 import { storeToRefs } from 'pinia'
-import { Form, Field, FieldArray } from 'vee-validate'
+import { Form, Field } from 'vee-validate'
 import * as Yup from 'yup'
 import { useUsersStore } from '@/stores/users.store.js'
 import { useAuthStore } from '@/stores/auth.store.js'
 import { useAlertStore } from '@/stores/alert.store.js'
-import { useOrgsStore } from '@/stores/orgs.store.js'
 
 const props = defineProps({
   register: {
@@ -52,7 +51,6 @@ const authStore = useAuthStore()
 const pwdErr =
   'Пароль должен быть не короче 8 символов и содержать хотя бы одну цифру и один специальный символ (!@#$%^&*()\\-_=+{};:,<.>)'
 const pwdReg = /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})((?=.*\d){1}).*$/
-const orgErr = 'Необходимо указать организацию'
 
 const schema = Yup.object().shape({
   firstName: Yup.string().required('Необходимо указать имя'),
@@ -60,14 +58,8 @@ const schema = Yup.object().shape({
   email: Yup.string()
     .required('Необходимо указать электронную почту')
     .email('Неверный формат электронной почты'),
-  orgs: Yup.array().when('lastName', (lastName, schema) => {
-    if (asAdmin() && lastName && lastName != '') {
-      return schema
-        .of(Yup.object().shape({ orgId: Yup.number() }))
-        .compact((o) => o.orgId == -1)
-        .min(1, orgErr)
-    }
-  }),
+  apiKey: Yup.string(),
+  apiSecret: Yup.string(),
   password: Yup.string().concat(
     isRegister() ? Yup.string().required('Необходимо указать пароль').matches(pwdReg, pwdErr) : null
   ),
@@ -79,16 +71,12 @@ const schema = Yup.object().shape({
     .oneOf([Yup.ref('password')], 'Пароли должны совпадать')
 })
 
-const orgsStore = useOrgsStore()
-const oorgs = storeToRefs(orgsStore).orgs
-orgsStore.getAll()
-
 const showPassword = ref(false)
 const showPassword2 = ref(false)
+const showSecret = ref(false)
 
 let user = ref({
-  isEnabled: 'ENABLED',
-  orgs: [{ orgId: -1 }]
+  isEnabled: 'ENABLED'
 })
 
 if (!isRegister()) {
@@ -105,7 +93,7 @@ function asAdmin() {
 }
 
 function getTitle() {
-  return isRegister() ? 'Регистрация' : 'Настройки'
+  return isRegister() ? (asAdmin() ? 'Регистрация пользователя' : 'Регистрация') : 'Настройки'
 }
 
 function getButton() {
@@ -120,25 +108,10 @@ function showAndEditCredentials() {
   return asAdmin()
 }
 
-function getOrgName(orgId) {
-  const res = computed(() => {
-    if (oorgs.value?.loading) {
-      return 'Загружается...'
-    }
-    const org = oorgs.value.find((o) => o.id === orgId)
-    return org?.name ? org.name : 'Не найдена'
-  })
-
-  return res.value
-}
-
 function getCredentials() {
   let crd = null
   if (user.value) {
     crd = 'Пользователь'
-    if (user.value.isManager === 'MANAGER') {
-      crd += '; менеджер'
-    }
     if (user.value.isAdmin === 'ADMIN') {
       crd += '; aдминистратор'
     }
@@ -157,7 +130,6 @@ function onSubmit(values, { setErrors }) {
         .catch((error) => setErrors({ apiError: error }))
     } else {
       values.isEnabled = true
-      values.isManager = false
       values.isAdmin = false
       values.host = window.location.href
       values.host = values.host.substring(0, values.host.lastIndexOf('/'))
@@ -184,10 +156,13 @@ function onSubmit(values, { setErrors }) {
         if (window.history.length > 0) {
           router.go(-1)
         } else {
-          router.push('/shipments')
+          router.push('/btasks')
         }
       })
-      .catch((error) => setErrors({ apiError: error }))
+      .catch((error) => {
+        console.log(error)
+        setErrors({ apiError: error })
+      })
   }
 }
 </script>
@@ -225,6 +200,17 @@ function onSubmit(values, { setErrors }) {
         />
       </div>
       <div class="form-group">
+        <label for="patronimic" class="label">Отчество:</label>
+        <Field
+          name="patronimic"
+          id="patronimic"
+          type="text"
+          class="form-control input"
+          :class="{ 'is-invalid': errors.patronimic }"
+          placeholder="Отчество"
+        />
+      </div>
+      <div class="form-group">
         <label for="email" class="label">Адрес электронной почты:</label>
         <Field
           name="email"
@@ -235,6 +221,53 @@ function onSubmit(values, { setErrors }) {
           :class="{ 'is-invalid': errors.email }"
           placeholder="Адрес электронной почты"
         />
+      </div>
+      <div class="form-group">
+        <label for="apiKey" class="label">API Key:</label>
+        <Field
+          name="apiKey"
+          id="apiKey"
+          autocomplete="off"
+          type="text"
+          class="form-control input"
+          :class="{ 'is-invalid': errors.apiKey }"
+          placeholder="API Key"
+        />
+      </div>
+      <div class="form-group">
+        <label for="apiSecret" class="label">API Secret:</label>
+        <Field
+          name="apiSecret"
+          id="apiSecret"
+          autocomplete="off"
+          :type="showSecret ? 'text' : 'password'"
+          class="form-control input password"
+          :class="{ 'is-invalid': errors.apiSecret }"
+          placeholder="API Secret"
+        />
+        <button
+          type="button"
+          @click="
+            (event) => {
+              event.preventDefault()
+              showSecret = !showSecret
+            }
+          "
+          class="button-o"
+        >
+          <font-awesome-icon
+            size="1x"
+            v-if="!showSecret"
+            icon="fa-solid fa-eye"
+            class="button-o-c"
+          />
+          <font-awesome-icon
+            size="1x"
+            v-if="showSecret"
+            icon="fa-solid fa-eye-slash"
+            class="button-o-c"
+          />
+        </button>
       </div>
       <div class="form-group">
         <label for="password" class="label">Пароль:</label>
@@ -307,44 +340,6 @@ function onSubmit(values, { setErrors }) {
         </button>
       </div>
       <div v-if="showCredentials()" class="form-group">
-        <span v-for="(field, idx) in user.orgs" :key="field.orgId">
-          <label :for="'org' + idx" class="label">{{ idx === 0 ? 'Организации:' : '' }}</label>
-          <span :id="'org' + idx"
-            ><em>{{ getOrgName(field.orgId) }}<br /></em
-          ></span>
-        </span>
-      </div>
-      <div v-if="showAndEditCredentials()" class="form-group">
-        <FieldArray name="orgs" v-slot="{ fields, push, remove }">
-          <div v-for="(field, idx) in fields" :key="field.key">
-            <label :for="'org' + idx" :class="idx > 0 ? 'label' : 'label-o-f'">
-              {{ idx === 0 ? 'Организации:' : '' }}
-            </label>
-
-            <button v-if="idx === 0" type="button" @click="push({ orgId: -1 })" class="button-o">
-              <font-awesome-icon size="1x" icon="fa-solid fa-plus" class="button-o-c" />
-            </button>
-
-            <Field
-              :name="`orgs[${idx}].orgId`"
-              :id="'org' + idx"
-              as="select"
-              class="form-control input select select-o"
-              :class="{ 'is-invalid': errors.orgs }"
-            >
-              <option value="-1">Выберите организацию:</option>
-              <option v-for="org in oorgs" :key="org" :value="org.id">
-                {{ org.name }}
-              </option>
-            </Field>
-
-            <button v-if="fields.length > 1" type="button" @click="remove(idx)" class="button-o">
-              <font-awesome-icon size="1x" icon="fa-solid fa-trash-can" class="button-o-c" />
-            </button>
-          </div>
-        </FieldArray>
-      </div>
-      <div v-if="showCredentials()" class="form-group">
         <label for="crd" class="label">Права:</label>
         <span id="crd"
           ><em>{{ getCredentials() }}</em></span
@@ -361,14 +356,6 @@ function onSubmit(values, { setErrors }) {
           value="ENABLED"
         />
         <label for="isEnabled">Пользователь</label>
-        <Field
-          id="isManager"
-          name="isManager"
-          type="checkbox"
-          class="checkbox checkbox-styled"
-          value="MANAGER"
-        />
-        <label for="isManager">Менеджер</label>
         <Field
           id="isAdmin"
           type="checkbox"
@@ -396,10 +383,14 @@ function onSubmit(values, { setErrors }) {
       </div>
       <div v-if="errors.lastName" class="alert alert-danger mt-3 mb-0">{{ errors.lastName }}</div>
       <div v-if="errors.firstName" class="alert alert-danger mt-3 mb-0">{{ errors.firstName }}</div>
+      <div v-if="errors.patronimic" class="alert alert-danger mt-3 mb-0">
+        {{ errors.patronimic }}
+      </div>
       <div v-if="errors.email" class="alert alert-danger mt-3 mb-0">{{ errors.email }}</div>
-      <div v-if="errors.orgs" class="alert alert-danger mt-3 mb-0">{{ errors.orgs }}</div>
       <div v-if="errors.password" class="alert alert-danger mt-3 mb-0">{{ errors.password }}</div>
       <div v-if="errors.password2" class="alert alert-danger mt-3 mb-0">{{ errors.password2 }}</div>
+      <div v-if="errors.apiKey" class="alert alert-danger mt-3 mb-0">{{ errors.apiKey }}</div>
+      <div v-if="errors.apiSecret" class="alert alert-danger mt-3 mb-0">{{ errors.apiSecret }}</div>
       <div v-if="errors.apiError" class="alert alert-danger mt-3 mb-0">{{ errors.apiError }}</div>
     </Form>
   </div>

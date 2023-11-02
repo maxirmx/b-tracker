@@ -1,7 +1,7 @@
 <script setup>
 // Copyright (C) 2023 Maxim [maxirmx] Samsonov (www.sw.consulting)
 // All rights reserved.
-// This file is a part of s-tracker applcation
+// This file is a part of b-tracker applcation
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -24,14 +24,11 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-import { computed } from 'vue'
-
 import { VDataTable } from 'vuetify/lib/labs/components.mjs'
 import router from '@/router'
 
 import { storeToRefs } from 'pinia'
 import { useUsersStore } from '@/stores/users.store.js'
-import { useOrgsStore } from '@/stores/orgs.store.js'
 import { itemsPerPageOptions } from '@/helpers/items.per.page.js'
 import { mdiMagnify } from '@mdi/js'
 
@@ -41,10 +38,6 @@ const authStore = useAuthStore()
 const usersStore = useUsersStore()
 const { users } = storeToRefs(usersStore)
 usersStore.getAll()
-
-const orgsStore = useOrgsStore()
-const { orgs } = storeToRefs(orgsStore)
-orgsStore.getAll()
 
 import { useAlertStore } from '@/stores/alert.store.js'
 const alertStore = useAlertStore()
@@ -58,35 +51,12 @@ function userSettings(item) {
   router.push('user/edit/' + id)
 }
 
-function getOrgs(item) {
-  const res = computed(() => {
-    if (orgs.value?.loading) {
-      return 'Загружается...'
-    }
-
-    var res = ''
-    var separator = ''
-    item.orgs.forEach((oo) => {
-      const org = orgs.value.find((o) => o.id === oo.orgId)
-      res = res + separator + (org ? org.name : 'Не найдена')
-      separator = '<br />'
-    })
-
-    return res
-  })
-
-  return res.value
-}
-
 function getCredentials(item, nobr = false) {
   let crd = null
   if (item) {
     crd = 'Пользователь'
-    if (item.isManager) {
-      crd += (nobr ? '' : '<br/>') + 'Менеджер'
-    }
     if (item.isAdmin) {
-      crd += (nobr ? '' : '<br/>') + 'Администратор'
+      crd += (nobr ? '' : '; ') + 'Администратор'
     }
   }
   return crd
@@ -96,24 +66,16 @@ function filterUsers(value, query, item) {
   if (query == null) return false
   const q = query.toLocaleUpperCase()
   if (
-    item.selectable.lastName.toLocaleUpperCase().indexOf(q) !== -1 ||
-    item.selectable.firstName.toLocaleUpperCase().indexOf(q) !== -1 ||
-    item.selectable.patronimic.toLocaleUpperCase().indexOf(q) !== -1 ||
-    item.selectable.email.toLocaleUpperCase().indexOf(q) !== -1
+    item.lastName.toLocaleUpperCase().indexOf(q) !== -1 ||
+    item.firstName.toLocaleUpperCase().indexOf(q) !== -1 ||
+    item.patronimic.toLocaleUpperCase().indexOf(q) !== -1 ||
+    item.email.toLocaleUpperCase().indexOf(q) !== -1
   ) {
     return true
   }
-  const crd = getCredentials(item.selectable, true)
+  const crd = getCredentials(item, true)
   if (crd.toLocaleUpperCase().indexOf(q) !== -1) {
     return true
-  }
-  if (!orgs.value?.loading) {
-    for (let i = 0; i < item.selectable.orgs.length; i++) {
-      const o = orgs.value.find((x) => x.id === item.selectable.orgs[i].orgId)
-      if (o != null && o.name.toLocaleUpperCase().indexOf(q) !== -1) {
-        return true
-      }
-    }
   }
   return false
 }
@@ -148,10 +110,10 @@ async function deleteUser(item) {
 
 const headers = [
   { title: 'Пользователь', align: 'start', key: 'id' },
-  { title: 'Организации', align: 'start', key: 'orgs' },
+  { title: 'E-mail', align: 'start', key: 'email' },
   { title: 'Права', align: 'start', key: 'credentials', sortable: false },
-  { title: '', align: 'center', key: 'actions1', sortable: false },
-  { title: '', align: 'center', key: 'actions2', sortable: false }
+  { title: '', align: 'center', key: 'actions1', sortable: false, width: '5%' },
+  { title: '', align: 'center', key: 'actions2', sortable: false, width: '5%' }
 ]
 </script>
 
@@ -187,20 +149,16 @@ const headers = [
         class="elevation-1"
       >
         <template v-slot:[`item.id`]="{ item }">
-          {{ item['selectable']['lastName'] }} {{ item['selectable']['firstName'] }} ({{
-            item['selectable']['email']
-          }})
+          {{ item['lastName'] }} {{ item['firstName'] }} {{ item['patronimic'] }}
         </template>
-        <template v-slot:[`item.orgs`]="{ item }">
-          <span v-html="getOrgs(item['selectable'])"></span>
-        </template>
+
         <template v-slot:[`item.credentials`]="{ item }">
-          <span v-html="getCredentials(item['selectable'])"></span>
+          <span v-html="getCredentials(item)"></span>
         </template>
         <template v-slot:[`item.actions1`]="{ item }">
-          <button @click="userSettings(item.selectable)" class="anti-btn">
+          <button @click="userSettings(item)" class="anti-btn">
             <font-awesome-icon
-              @click="userSettings(item.selectable)"
+              @click="userSettings(item)"
               size="1x"
               icon="fa-solid fa-pen"
               class="anti-btn"
@@ -208,19 +166,21 @@ const headers = [
           </button>
         </template>
         <template v-slot:[`item.actions2`]="{ item }">
-          <button @click="deleteUser(item.selectable)" class="anti-btn">
+          <button @click="deleteUser(item)" class="anti-btn">
             <font-awesome-icon size="1x" icon="fa-solid fa-trash-can" class="anti-btn" />
           </button>
         </template>
       </v-data-table>
-      <v-spacer></v-spacer>
-      <v-text-field
-        v-model="authStore.users_search"
-        :append-inner-icon="mdiMagnify"
-        label="Поиск по любой информации о пользователе"
-        variant="solo"
-        hide-details
-      />
+      <div v-if="!users?.length" class="text-center m-5">Список пользователей пуст</div>
+      <div v-if="users?.length">
+        <v-text-field
+          v-model="authStore.users_search"
+          :append-inner-icon="mdiMagnify"
+          label="Поиск по любой информации о пользователе"
+          variant="solo"
+          hide-details
+        />
+      </div>
     </v-card>
     <div v-if="users?.loading" class="text-center m-5">
       <span class="spinner-border spinner-border-lg align-center"></span>

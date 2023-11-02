@@ -1,6 +1,6 @@
 // Copyright (C) 2023 Maxim [maxirmx] Samsonov  (www.sw.consulting)
 // All rights reserved.
-// This file is a part of s-tracker applcation
+// This file is a part of b-tracker applcation
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -33,38 +33,17 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 import {
-  faArrowRightFromBracket,
-  faArrowRightToBracket,
-  faCalendarPlus,
-  faDownload,
   faEye,
   faEyeSlash,
-  faHouseChimneyMedical,
+  faHand,
   faPen,
-  faPenToSquare,
+  faPlay,
   faPlus,
   faTrashCan,
-  faTruckFast,
-  faUserPlus,
-  faXmark
+  faUserPlus
 } from '@fortawesome/free-solid-svg-icons'
 
-library.add(
-  faArrowRightFromBracket,
-  faArrowRightToBracket,
-  faCalendarPlus,
-  faDownload,
-  faEye,
-  faEyeSlash,
-  faHouseChimneyMedical,
-  faPen,
-  faPenToSquare,
-  faPlus,
-  faTrashCan,
-  faTruckFast,
-  faUserPlus,
-  faXmark
-)
+library.add(faEye, faEyeSlash, faHand, faPen, faPlay, faPlus, faTrashCan, faUserPlus)
 
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'

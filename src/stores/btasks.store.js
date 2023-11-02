@@ -26,57 +26,73 @@
 import { defineStore } from 'pinia'
 import { fetchWrapper } from '@/helpers/fetch.wrapper.js'
 import { apiUrl } from '@/helpers/config.js'
-import router from '@/router'
 
-const baseUrl = `${apiUrl}/auth`
+const baseUrl = `${apiUrl}/btasks`
 
-export const useAuthStore = defineStore({
-  id: 'auth',
+function translate(param) {
+  param.isRunning = param.isRunning === 'RUNNING'
+  return param
+}
+
+export const useBTasksStore = defineStore({
+  id: 'btasks',
   state: () => ({
-    // initialize state from local storage to enable user to stay logged in
-    user: JSON.parse(localStorage.getItem('user')),
-    btasks_per_page: 10,
-    btasks_search: '',
-    btasks_sort_by: ['id'],
-    btasks_page: 1,
-    users_per_page: 10,
-    users_search: '',
-    users_sort_by: ['id'],
-    users_page: 1,
-    returnUrl: null,
-    re_jwt: null,
-    re_tgt: null
+    btasks: {},
+    btask: {}
   }),
   actions: {
-    async check() {
-      await fetchWrapper.get(`${baseUrl}/check`)
+    async add(btask, trnslt = false) {
+      if (trnslt) {
+        btask = translate(btask)
+      }
+      await fetchWrapper.post(`${baseUrl}/add`, btask)
     },
-    async register(user) {
-      await fetchWrapper.post(`${baseUrl}/register`, user)
-    },
-    async recover(user) {
-      await fetchWrapper.post(`${baseUrl}/recover`, user)
-    },
-    async re() {
-      const re_jwt = this.re_jwt
-      this.re_jwt = null
-      const user = await fetchWrapper.put(`${baseUrl}/${this.re_tgt}`, { jwt: re_jwt })
-      this.user = user
-      localStorage.setItem('user', JSON.stringify(user))
-    },
-    async login(email, password) {
-      const user = await fetchWrapper.post(`${baseUrl}/login`, { email, password })
-      this.user = user
-      localStorage.setItem('user', JSON.stringify(user))
-      if (this.returnUrl) {
-        router.push(this.returnUrl)
-        this.returnUrl = null
+    async getAll() {
+      this.btasks = { loading: true }
+      try {
+        const url = baseUrl
+        this.btasks = await fetchWrapper.get(url)
+      } catch (error) {
+        this.btasks = { error }
       }
     },
-    logout() {
-      this.user = null
-      localStorage.removeItem('user')
-      router.push('/login')
+    async get(id, trnslt = false) {
+      this.btask = { loading: true }
+      try {
+        this.btask = await fetchWrapper.get(`${baseUrl}/${id}`)
+        if (trnslt) {
+          this.btask.isRunning = this.btask.isRunning ? 'RUNNING' : 'JERK'
+        }
+      } catch (error) {
+        this.btask = { error }
+      }
+    },
+    async delete(id) {
+      try {
+        await fetchWrapper.delete(`${baseUrl}/${id}`, {})
+      } catch (error) {
+        this.btask = { error }
+      }
+    },
+    async start(id) {
+      try {
+        await fetchWrapper.post(`${baseUrl}/start/${id}`, {})
+      } catch (error) {
+        this.btask = { error }
+      }
+    },
+    async stop(id) {
+      try {
+        await fetchWrapper.post(`${baseUrl}/stop/${id}`, {})
+      } catch (error) {
+        this.btask = { error }
+      }
+    },
+    async update(id, params, trnslt = false) {
+      if (trnslt) {
+        params = translate(params)
+      }
+      await fetchWrapper.put(`${baseUrl}/${id}`, params)
     }
   }
 })

@@ -1,7 +1,7 @@
 <script setup>
 // Copyright (C) 2023 Maxim [maxirmx] Samsonov (www.sw.consulting)
 // All rights reserved.
-// This file is a part of s-tracker applcation
+// This file is a part of b-tracker applcation
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -49,9 +49,10 @@ const { alert } = storeToRefs(alertStore)
 function onSubmit(values, { setErrors }) {
   const authStore = useAuthStore()
   const { login_email, login_password } = values
+
   return authStore
     .login(login_email, login_password)
-    .then(() => router.push('/shipments'))
+    .then(() => router.push('/btasks'))
     .catch((error) => setErrors({ apiError: error }))
 }
 </script>

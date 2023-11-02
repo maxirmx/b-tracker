@@ -23,7 +23,52 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-//export const apiUrl = 'http://localhost/api'
-//`${import.meta.env.VITE_API_URL}`
-export const apiUrl = 'http://kreel0.samsonov.net:8080/api'
-export const enableLog = true
+import { reactive, markRaw } from 'vue'
+
+import StopLossIcon from '@/components/icons/IconStopLoss.vue'
+import StopLossIdleIcon from '@/components/icons/IconStopLossIdle.vue'
+import TakeProfitIcon from '@/components/icons/IconTakeProfit.vue'
+import TakeProfitIdleIcon from '@/components/icons/IconTakeProfitIdle.vue'
+
+import UnknownIcon from '@/components/icons/IconUnknown.vue'
+
+export const stcodes = {
+  STOP_LOSS: 0,
+  TAKE_PROFIT: 1
+}
+
+export const strategies = reactive({
+  items: [
+    {
+      id: stcodes.STOP_LOSS,
+      name: 'stop-loss',
+      icon: markRaw(StopLossIcon),
+      iconIdle: markRaw(StopLossIdleIcon)
+    },
+    {
+      id: stcodes.TAKE_PROFIT,
+      name: 'take-profit',
+      icon: markRaw(TakeProfitIcon),
+      iconIdle: markRaw(TakeProfitIdleIcon)
+    }
+  ],
+
+  getName(code) {
+    const item = this.items.find((obj) => {
+      return obj.id === code
+    })
+    return item ? item.name : 'неизвестная стратегия'
+  },
+  getIcon(code, idle = false) {
+    const item = this.items.find((obj) => {
+      return obj.id === code
+    })
+    return item ? (idle ? item.iconIdle : item.icon) : markRaw(UnknownIcon)
+  },
+  getIconByName(name, idle = false) {
+    const item = this.items.find((obj) => {
+      return obj.name === name
+    })
+    return item ? (idle ? item.iconIdle : item.icon) : markRaw(UnknownIcon)
+  }
+})

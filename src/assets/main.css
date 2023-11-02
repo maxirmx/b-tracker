@@ -1,5 +1,9 @@
 @import './base.css';
 
+/*
+    #1976D2  -- vuetify 'blue-darken-2'
+*/
+
 #app {
   padding: 1.3rem;
   margin: 0 auto;
@@ -24,9 +28,7 @@
   margin: 0 auto;
 }
 
-/* Forms: user settings/register, shipment new/edit, status new/edit */
-/* Tables: organizations */
-/* Lists: shipment history */
+/* Forms: user settings/register, btask new/edit */
 .form-2,
 .table-1,
 .list-1 {
@@ -35,14 +37,14 @@
   margin: 0 auto;
 }
 
-/* Tables: users */
+/* Tables: users, btasks */
 .table-2 {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
 }
 
-/* Tables: shipments, archieve */
+/* Tables: --   extra wide */
 .table-3 {
   width: 100%;
   max-width: 2048px;
@@ -50,7 +52,7 @@
   padding: 0;
 }
 
-/* The link to create new entity (shipment, user, org, status */
+/* The link to create new entity (btask, user, org, status */
 .link-crt {
   margin-bottom: 1rem;
 }
@@ -71,7 +73,7 @@
   top: 20px;
   border: none;
   height: 4px;
-  background: #ef7d00;
+  background: #1976d2;
   margin-bottom: 50px;
 }
 
@@ -90,7 +92,7 @@
   padding: 0.5rem;
   margin-bottom: 1rem;
   border-radius: 0.25rem;
-  border: 1px solid #ef7d00;
+  border: 1px solid #1976d2;
   background-color: #f5f5f5;
   color: #282626;
   font-size: 1rem;
@@ -107,7 +109,7 @@
 
 .input:focus {
   outline: none;
-  box-shadow: 0px 2px 10px #ef7d00;
+  box-shadow: 0px 2px 10px #1976d2;
 }
 
 .input::placeholder {
@@ -139,7 +141,7 @@
 
 .button-o:focus {
   outline: none;
-  box-shadow: 0px 2px 10px #ef7d00;
+  box-shadow: 0px 2px 10px #1976d2;
 }
 
 .button-o-c {
@@ -150,7 +152,7 @@
   padding: 0.5rem;
   border-radius: 0.25rem;
   border: none;
-  background-color: #ef8514;
+  background-color: #1976d2;
   color: white;
   font-size: 1rem;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
@@ -169,7 +171,7 @@ a:hover {
 a,
 .orange {
   text-decoration: none;
-  color: #ef7d00;
+  color: #1976d2;
   transition: 0.4s;
 }
 
@@ -225,7 +227,7 @@ a,
   margin-right: 1rem;
   width: 16px;
   height: 16px;
-  background-color: #ef8514;
+  background-color: #1976d2;
   border-radius: 3px;
 }
 
@@ -250,7 +252,7 @@ a,
 
 .button:focus {
   outline: none;
-  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 2px 10px rgba(EE, EE, EE, 0.3);
 }
 
 @media (min-width: 768px) {
@@ -298,7 +300,7 @@ a,
   float: right;
   margin-left: 0.5rem;
   text-decoration: none;
-  color: #ef7d00;
+  color: #1976d2;
   transition: 0.4s;
 }
 
@@ -312,21 +314,22 @@ a,
 
 @media (hover: hover) {
   a:hover {
-    color: #975102;
-    background-color: #fcf5ed;
+    color: #eeeeee;
+    background-color: #2773a6;
   }
 
   .button:hover {
-    background-color: #eca75e;
+    color: #eeeeee;
+    background-color: #2773a6;
   }
 
   .btn:hover {
-    color: rgb(30, 30, 30);
+    color: #eeeeee;
     background-color: white;
   }
   .anti-btn:hover,
   .button-o-c:hover {
-    color: #ef7d00;
+    color: #1976d2;
     background-color: white;
   }
 }
