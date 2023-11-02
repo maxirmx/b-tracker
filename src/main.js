@@ -33,36 +33,17 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 import {
-  faArrowRightFromBracket,
-  faArrowRightToBracket,
-  faCalendarPlus,
-  faDownload,
   faEye,
   faEyeSlash,
-  faHouseChimneyMedical,
+  faHand,
   faPen,
-  faPenToSquare,
+  faPlay,
   faPlus,
   faTrashCan,
-  faUserPlus,
-  faXmark
+  faUserPlus
 } from '@fortawesome/free-solid-svg-icons'
 
-library.add(
-  faArrowRightFromBracket,
-  faArrowRightToBracket,
-  faCalendarPlus,
-  faDownload,
-  faEye,
-  faEyeSlash,
-  faHouseChimneyMedical,
-  faPen,
-  faPenToSquare,
-  faPlus,
-  faTrashCan,
-  faUserPlus,
-  faXmark
-)
+library.add(faEye, faEyeSlash, faHand, faPen, faPlay, faPlus, faTrashCan, faUserPlus)
 
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'

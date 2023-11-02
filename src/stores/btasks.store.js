@@ -61,7 +61,7 @@ export const useBTasksStore = defineStore({
       try {
         this.btask = await fetchWrapper.get(`${baseUrl}/${id}`)
         if (trnslt) {
-          this.btask.isRunning = this.user.isRunning ? 'RUNNING' : 'JERK'
+          this.btask.isRunning = this.btask.isRunning ? 'RUNNING' : 'JERK'
         }
       } catch (error) {
         this.btask = { error }
@@ -70,6 +70,20 @@ export const useBTasksStore = defineStore({
     async delete(id) {
       try {
         await fetchWrapper.delete(`${baseUrl}/${id}`, {})
+      } catch (error) {
+        this.btask = { error }
+      }
+    },
+    async start(id) {
+      try {
+        await fetchWrapper.post(`${baseUrl}/start/${id}`, {})
+      } catch (error) {
+        this.btask = { error }
+      }
+    },
+    async stop(id) {
+      try {
+        await fetchWrapper.post(`${baseUrl}/stop/${id}`, {})
       } catch (error) {
         this.btask = { error }
       }

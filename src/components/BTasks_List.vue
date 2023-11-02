@@ -51,6 +51,32 @@ function editBTask(item) {
   router.push('btask/edit/' + item.id)
 }
 
+function startBTask(item) {
+  item.isStartStop = true
+  btasksStore
+    .start(item['id'])
+    .then(() => {
+      btasksStore.getAll()
+    })
+    .catch((error) => {
+      alertStore.error(error)
+    })
+    .finally(() => (item.isStartStop = false))
+}
+
+function stopBTask(item) {
+  item.isStartStop = true
+  btasksStore
+    .stop(item['id'])
+    .then(() => {
+      btasksStore.getAll()
+    })
+    .catch((error) => {
+      alertStore.error(error)
+    })
+    .finally(() => (item.isStartStop = false))
+}
+
 async function deleteBTask(item) {
   const content =
     'Удалить торгового робота "' + item.strategy + ' ' + item.symbol1 + '/' + item.symbol2 + '" ?'
@@ -94,13 +120,14 @@ function filterShipments(value, query, item) {
 }
 
 const headers = [
-  { title: 'Стратегия', align: 'center', key: 'icon' },
+  { title: '', align: 'center', key: 'icon' },
   { title: 'Стратегия', align: 'start', key: 'strategy' },
   { title: 'Базовая криптовалюта', align: 'center', key: 'symbol1' },
   { title: 'Криптовалюта котировки', align: 'center', key: 'symbol2' },
   { title: 'Порог', align: 'center', key: 'threshold' },
   { title: 'Состояние', align: 'center', key: 'isRunning' },
-  //{ title: '', align: 'center', key: 'actionEdit', sortable: false, width: '5%' },
+  { title: '', align: 'center', key: 'actionStartStop', sortable: false, width: '5%' },
+  { title: '', align: 'center', key: 'actionEdit', sortable: false, width: '5%' },
   { title: '', align: 'center', key: 'actionDelete', sortable: false, width: '5%' }
 ]
 </script>
@@ -138,11 +165,31 @@ const headers = [
         pa-0
       >
         <template v-slot:[`item.icon`]="{ item }">
-          <component :is="strategies.getIconByName(item.strategy)"></component>
+          <component :is="strategies.getIconByName(item.strategy, !item.isRunning)"></component>
         </template>
 
         <template v-slot:[`item.isRunning`]="{ item }">
-          {{ item.isRunning ? 'Запущен' : 'Остановлен' }}
+          {{ item.isRunning ? 'Запущен' : 'Остановлен' }} {{ item.hasFailed ? ' [Ошибка]' : '' }}
+        </template>
+
+        <template v-slot:[`item.actionStartStop`]="{ item }">
+          <div v-if="item.isStartStop">
+            <span class="spinner-border spinner-border-sm align-center"></span>
+          </div>
+          <button
+            v-if="!item.isStartStop && item.isRunning"
+            @click="stopBTask(item)"
+            class="anti-btn"
+          >
+            <font-awesome-icon size="1x" icon="fa-solid fa-hand" class="anti-btn" />
+          </button>
+          <button
+            v-if="!item.isStartStop && !item.isRunning"
+            @click="startBTask(item)"
+            class="anti-btn"
+          >
+            <font-awesome-icon size="1x" icon="fa-solid fa-play" class="anti-btn" />
+          </button>
         </template>
 
         <template v-slot:[`item.actionEdit`]="{ item }">
@@ -150,6 +197,7 @@ const headers = [
             <font-awesome-icon size="1x" icon="fa-solid fa-pen" class="anti-btn" />
           </button>
         </template>
+
         <template v-slot:[`item.actionDelete`]="{ item }">
           <button @click="deleteBTask(item)" class="anti-btn">
             <font-awesome-icon size="1x" icon="fa-solid fa-trash-can" class="anti-btn" />

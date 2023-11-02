@@ -26,7 +26,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth.store.js'
 import { useAlertStore } from '@/stores/alert.store.js'
-import { hideDrawer } from '@/helpers/drawer.js'
 
 const publicPages = ['/recover', '/register']
 const loginPages = ['/login']
@@ -79,7 +78,7 @@ const router = createRouter({
       component: () => import('@/views/BTasks_View.vue')
     },
     {
-      path: '/btask/edit/:robotId',
+      path: '/btask/edit/:btaskId',
       name: 'Настройка робота',
       component: () => import('@/views/BTask_EditView.vue'),
       props: true

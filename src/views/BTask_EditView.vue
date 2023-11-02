@@ -36,5 +36,7 @@ const id = parseInt(props.btaskId)
 </script>
 
 <template>
-  <BTask :create="false" :btaskId="id" />
+  <Suspense>
+    <BTask :create="false" :btaskId="id" />
+  </Suspense>
 </template>

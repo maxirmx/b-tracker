@@ -51,6 +51,14 @@ function getUserName() {
         authStore.user.patronimic
     : ''
 }
+
+/*<v-list-item>
+          <RouterLink to="/register" class="link">Регистрация</RouterLink>
+        </v-list-item>
+        <v-list-item>
+          <RouterLink to="/recover" class="link">Восстановление пароля</RouterLink>
+        </v-list-item>
+*/
 </script>
 
 <template>
@@ -87,12 +95,6 @@ function getUserName() {
       <v-list v-if="!authStore.user">
         <v-list-item>
           <RouterLink to="/login" class="link">Вход</RouterLink>
-        </v-list-item>
-        <v-list-item>
-          <RouterLink to="/register" class="link">Регистрация</RouterLink>
-        </v-list-item>
-        <v-list-item>
-          <RouterLink to="/recover" class="link">Восстановление пароля</RouterLink>
         </v-list-item>
       </v-list>
       <template v-slot:append>

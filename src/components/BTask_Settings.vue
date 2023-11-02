@@ -24,7 +24,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { Form, Field } from 'vee-validate'
 import { storeToRefs } from 'pinia'
 import * as Yup from 'yup'
@@ -47,17 +47,29 @@ const props = defineProps({
 
 const authStore = useAuthStore()
 const btasksStore = useBTasksStore()
-const { btask } = storeToRefs(btasksStore)
+
+let btask
+
 if (!props.create) {
-  btasksStore.get(props.btaskId, true)
+  ;({ btask } = storeToRefs(btasksStore))
+  await btasksStore.get(props.btaskId, true)
+} else {
+  btask = ref({
+    strategy: '',
+    symbol1: '',
+    symbol2: '',
+    threshold: '',
+    userId: authStore.user?.id,
+    isRunning: 'JERK'
+  })
 }
 
 const userIdError = 'Не удалось определить идентификатор пользователя. Это внутренняя ошибка.'
 const schema = Yup.object().shape({
-  strategy: Yup.string().required('Выберите статус'),
+  strategy: Yup.string().required('Выберите стратегию'),
   symbol1: Yup.string().required('Введите символ 1'),
   symbol2: Yup.string().required('Введите символ 2'),
-  threshold: Yup.number().required('Введите порог'),
+  threshold: Yup.number().required('Введите пороговое значение'),
   userId: Yup.number(userIdError).typeError(userIdError).integer(userIdError).required(userIdError)
 })
 
@@ -79,24 +91,13 @@ function onSubmit(values, { setErrors }) {
       .catch((error) => setErrors({ apiError: error }))
   } else {
     return btasksStore
-      .update(props.robotId, values, true)
+      .update(props.btaskId, values, true)
       .then(() => {
         router.go(-1)
       })
       .catch((error) => setErrors({ apiError: error }))
   }
 }
-
-const status = computed(() => {
-  return {
-    strategy: props.create ? '' : btask.value.strategy,
-    symbol1: props.create ? '' : btask.value.symbol1,
-    symbol2: props.create ? '' : btask.value.symbol2,
-    threshold: props.create ? '' : btask.value.threshold,
-    userId: props.create ? authStore.user?.id : btask.value.userId,
-    isRunning: props.create ? 'JERK' : btask.value.isRunning
-  }
-})
 </script>
 
 <template>
@@ -105,7 +106,7 @@ const status = computed(() => {
     <hr class="hr" />
     <Form
       @submit="onSubmit"
-      :initial-values="status"
+      :initial-values="btask"
       :validation-schema="schema"
       v-slot="{ errors, isSubmitting }"
     >
@@ -159,7 +160,7 @@ const status = computed(() => {
         />
       </div>
 
-      <div  class="form-group">
+      <div class="form-group">
         <label for="isRunning" class="label">Состояние</label>
         <Field
           id="isRunning"

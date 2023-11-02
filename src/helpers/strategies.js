@@ -26,7 +26,9 @@
 import { reactive, markRaw } from 'vue'
 
 import StopLossIcon from '@/components/icons/IconStopLoss.vue'
+import StopLossIdleIcon from '@/components/icons/IconStopLossIdle.vue'
 import TakeProfitIcon from '@/components/icons/IconTakeProfit.vue'
+import TakeProfitIdleIcon from '@/components/icons/IconTakeProfitIdle.vue'
 
 import UnknownIcon from '@/components/icons/IconUnknown.vue'
 
@@ -40,12 +42,14 @@ export const strategies = reactive({
     {
       id: stcodes.STOP_LOSS,
       name: 'stop-loss',
-      icon: markRaw(StopLossIcon)
+      icon: markRaw(StopLossIcon),
+      iconIdle: markRaw(StopLossIdleIcon)
     },
     {
       id: stcodes.TAKE_PROFIT,
       name: 'take-profit',
-      icon: markRaw(TakeProfitIcon)
+      icon: markRaw(TakeProfitIcon),
+      iconIdle: markRaw(TakeProfitIdleIcon)
     }
   ],
 
@@ -55,16 +59,16 @@ export const strategies = reactive({
     })
     return item ? item.name : 'неизвестная стратегия'
   },
-  getIcon(code) {
+  getIcon(code, idle = false) {
     const item = this.items.find((obj) => {
       return obj.id === code
     })
-    return item ? item.icon : markRaw(UnknownIcon)
+    return item ? (idle ? item.iconIdle : item.icon) : markRaw(UnknownIcon)
   },
-  getIconByName(name) {
+  getIconByName(name, idle = false) {
     const item = this.items.find((obj) => {
       return obj.name === name
     })
-    return item ? item.icon : markRaw(UnknownIcon)
+    return item ? (idle ? item.iconIdle : item.icon) : markRaw(UnknownIcon)
   }
 })

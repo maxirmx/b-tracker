@@ -28,5 +28,7 @@ import BTask from '@/components/BTask_Settings.vue'
 </script>
 
 <template>
-  <BTask :create="true" />
+  <Suspense>
+    <BTask :create="true" />
+  </Suspense>
 </template>
