@@ -120,8 +120,9 @@ function getCredentials() {
 }
 
 function onSubmit(values, { setErrors }) {
-  // Если там было отчество, то мы его сохраним
-  values.patronimic = user.value.patronimic
+  if (values.apiKey == null) values.apiKey = ''
+  if (values.apiSecret == null) values.apiSecret = ''
+
   if (isRegister()) {
     if (asAdmin()) {
       return usersStore

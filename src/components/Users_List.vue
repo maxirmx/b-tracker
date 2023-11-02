@@ -63,17 +63,24 @@ function getCredentials(item, nobr = false) {
 }
 
 function filterUsers(value, query, item) {
-  if (query == null) return false
+  if (query == null || item == null) {
+    return false
+  }
+  const i = item.raw
+  if (i == null) {
+    return false
+  }
   const q = query.toLocaleUpperCase()
+
   if (
-    item.lastName.toLocaleUpperCase().indexOf(q) !== -1 ||
-    item.firstName.toLocaleUpperCase().indexOf(q) !== -1 ||
-    item.patronimic.toLocaleUpperCase().indexOf(q) !== -1 ||
-    item.email.toLocaleUpperCase().indexOf(q) !== -1
+    i.lastName.toLocaleUpperCase().indexOf(q) !== -1 ||
+    i.firstName.toLocaleUpperCase().indexOf(q) !== -1 ||
+    i.patronimic.toLocaleUpperCase().indexOf(q) !== -1 ||
+    i.email.toLocaleUpperCase().indexOf(q) !== -1
   ) {
     return true
   }
-  const crd = getCredentials(item, true)
+  const crd = getCredentials(i, true)
   if (crd.toLocaleUpperCase().indexOf(q) !== -1) {
     return true
   }

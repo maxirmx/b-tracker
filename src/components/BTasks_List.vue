@@ -47,6 +47,12 @@ btasksStore.getAll(false)
 const alertStore = useAlertStore()
 const { alert } = storeToRefs(alertStore)
 
+function getState(item) {
+  let crd = !item?.isRunning ? 'Остановлена' : 'Запущена'
+  if (item?.hasFailed) crd += ' [Ошибка]'
+  return crd
+}
+
 function editBTask(item) {
   router.push('btask/edit/' + item.id)
 }
@@ -105,17 +111,30 @@ async function deleteBTask(item) {
       })
   }
 }
-function filterShipments(value, query, item) {
-  if (query == null) return false
+function filterBTasks(value, query, item) {
+  if (query == null || item == null) {
+    return false
+  }
+  const i = item.raw
+  if (i == null) {
+    return false
+  }
   const q = query.toLocaleUpperCase()
+
   if (
-    item.strategy.toLocaleUpperCase().indexOf(q) !== -1 ||
-    item.symbol1.toLocaleUpperCase().indexOf(q) !== -1 ||
-    item.symbol2.toLocaleUpperCase().indexOf(q) !== -1 ||
-    item.threshold.toLocaleUpperCase().indexOf(q) !== -1
+    i.strategy.toLocaleUpperCase().indexOf(q) !== -1 ||
+    i.symbol1.toLocaleUpperCase().indexOf(q) !== -1 ||
+    i.symbol2.toLocaleUpperCase().indexOf(q) !== -1 ||
+    i.threshold.toLocaleUpperCase().indexOf(q) !== -1
   ) {
     return true
   }
+
+  const crd = getState(i)
+  if (crd.toLocaleUpperCase().indexOf(q) !== -1) {
+    return true
+  }
+
   return false
 }
 
@@ -158,7 +177,7 @@ const headers = [
         :headers="headers"
         :items="btasks"
         :search="authStore.btasks_search"
-        :custom-filter="filterShipments"
+        :custom-filter="filterBTasks"
         v-model:sort-by="authStore.btasks_sort_by"
         item-value="number"
         class="elevation-1"
@@ -169,7 +188,7 @@ const headers = [
         </template>
 
         <template v-slot:[`item.isRunning`]="{ item }">
-          {{ item.isRunning ? 'Запущен' : 'Остановлен' }} {{ item.hasFailed ? ' [Ошибка]' : '' }}
+          {{ getState(item) }}
         </template>
 
         <template v-slot:[`item.actionStartStop`]="{ item }">

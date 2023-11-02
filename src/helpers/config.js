@@ -25,5 +25,5 @@
 
 //export const apiUrl = 'http://localhost/api'
 //`${import.meta.env.VITE_API_URL}`
-export const apiUrl = 'http://kreel0.samsonov.net:8080/api'
+export const apiUrl = 'https://kreel0.samsonov.net:1443/api'
 export const enableLog = true
